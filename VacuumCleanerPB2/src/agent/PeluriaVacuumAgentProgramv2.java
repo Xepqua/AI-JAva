@@ -45,17 +45,18 @@ public class PeluriaVacuumAgentProgramv2 implements AgentProgram {
 	}
 	
 	private void updateMap() {
-		
+		//CARMELO
 	}
 
 	private void changeDirection() {
-		
+		//FACCIAMO INSIEME
 	}
 
 	private boolean thereIsObstacle() {
-		return false;
+		return previusPosition.equals(currentPosition);
 	}
 
+	
 	private boolean isInDirtyTile() {
 		return false;
 	}
