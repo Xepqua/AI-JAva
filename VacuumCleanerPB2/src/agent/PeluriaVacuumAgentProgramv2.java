@@ -16,6 +16,10 @@ public class PeluriaVacuumAgentProgramv2 implements AgentProgram {
 	private Action currentDirection;
 	private Point previusPosition;
 	private Point currentPosition;
+	private Point baseLocation;
+	
+	//dimension of enviroment
+	private int N;
 	
 	private UndirectedGraph<TileNode, DefaultEdge> graphMap;
 
@@ -24,12 +28,16 @@ public class PeluriaVacuumAgentProgramv2 implements AgentProgram {
 	@Override
 	public Action execute(Percept percept) {
 		
+		//return true if the agent is in a dirty tile 		
 		if(isInDirtyTile())
 			return getActionFromName("suck");
 		
+		
+		//return true if in current direction there is an obstacle
 		if(thereIsObstacle())
 			changeDirection();
 		
+		//add in a graph a tile
 		updateMap();
 		
 		return currentDirection; 
