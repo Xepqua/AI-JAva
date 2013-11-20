@@ -20,7 +20,7 @@ import aima.core.agent.Percept;
 import aima.core.agent.impl.DynamicAction;
 import aima.core.agent.impl.NoOpAction;
 
-public class PeluriaVacuumAgentProgram implements AgentProgram {
+public class PeluriaVacuumAgentProgramv1 implements AgentProgram {
 	
 	//A rappresentation of a map in a graph
 	private UndirectedGraph<Point, DefaultEdge> graphMap;
