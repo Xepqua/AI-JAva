@@ -111,10 +111,9 @@ public class PeluriaVacuumAgentProgramv2 implements AgentProgram {
 		} else if (currentDirection.equals(getActionFromName("right"))) {
 			nextPosition.y = currentPosition.y + 1;
 		}
-		TileNode tileNode = new TileNode(currentPosition, false);
 		TileNode nextTileNode = new TileNode(nextPosition, false);
 		graphMap.addVertex(nextTileNode);
-		graphMap.addEdge(tileNode, nextTileNode);
+		graphMap.addEdge(getTileFromPoint(currentPosition), nextTileNode);
 	}
 
 	private void changeDirection() {
