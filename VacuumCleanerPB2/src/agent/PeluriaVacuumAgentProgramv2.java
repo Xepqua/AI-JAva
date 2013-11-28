@@ -114,7 +114,12 @@ public class PeluriaVacuumAgentProgramv2 implements AgentProgram {
 		TileNode tileNode = new TileNode(currentPosition, false);
 		TileNode nextTileNode = new TileNode(nextPosition, false);
 		graphMap.addVertex(nextTileNode);
-		graphMap.addEdge(tileNode, nextTileNode);
+		for (TileNode node : graphMap.vertexSet()) {
+			if(node.equals(tileNode)){
+				graphMap.addEdge(node, nextTileNode);
+			}
+		}
+//		graphMap.addEdge(tileNode, nextTileNode);
 	}
 
 	private void changeDirection() {
