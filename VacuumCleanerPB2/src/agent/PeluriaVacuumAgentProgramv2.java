@@ -35,6 +35,7 @@ public class PeluriaVacuumAgentProgramv2 implements AgentProgram {
 
 	@Override
 	public Action execute(Percept percept) {
+		
 
 		final LocalVacuumEnvironmentPerceptTaskEnvironmentB environmentPercept = (LocalVacuumEnvironmentPerceptTaskEnvironmentB) percept;
 
@@ -63,9 +64,68 @@ public class PeluriaVacuumAgentProgramv2 implements AgentProgram {
 
 		// add in a graph a tile
 		updateMap();
-
+		
 		return currentDirection;
 
+	}
+
+//Print the grahMap
+	private void printGraph() {
+		System.out.println("---------START-------");
+		int maxN=N*3,maxM=M*3;
+		int m[][] = new int[maxN][maxM];
+		for(int i=0;i<maxN;i++)
+			for(int j=0;j<maxM;j++)
+				m[i][j]=0;
+		
+		for(TileNode t:graphMap.vertexSet()){
+
+			if(t.TileType==LocationState.Obstacle)
+				m[t.position.x+N][t.position.y+M]=2;
+			else
+				m[t.position.x+N][t.position.y+M]=1;
+
+			
+		}
+		
+		for(int i=0;i<maxN;i++){
+			for(int j=0;j<maxM;j++)
+				if(i-N==currentPosition.x && j-M==currentPosition.y)
+					System.out.print("@");
+				else if(m[i][j]==1)
+					System.out.print("o");
+				else if(m[i][j]==0)
+					System.out.print(" ");
+				else
+					System.out.print("#");
+			System.out.println("");
+		}
+		System.out.println("-----------END--------");
+		
+	}
+	
+//get TileNode from Edge
+	private void getTileNodeFromEdge(DefaultEdge e,TileNode t1,TileNode t2){
+		String edgeStrings[]=e.toString().split(":");
+		int x1=Integer.valueOf(edgeStrings[0].substring(edgeStrings[0].indexOf("x= ")+3,edgeStrings[0].indexOf(" y")));
+		int y1=Integer.valueOf(edgeStrings[0].substring(edgeStrings[0].indexOf("y= ")+3,edgeStrings[0].indexOf(" type=")));
+		String state1=edgeStrings[0].substring(edgeStrings[0].indexOf("type= ")+3,edgeStrings[0].length());
+
+		t1.position.x=x1;
+		t1.position.y=y1;
+		t1.TileType=LocationState.Clean;
+		if(state1.equals("Obstacle"))
+			t1.TileType=LocationState.Obstacle;
+
+		int x2=Integer.valueOf(edgeStrings[1].substring(edgeStrings[1].indexOf("x= ")+3,edgeStrings[1].indexOf(" y")));
+		int y2=Integer.valueOf(edgeStrings[1].substring(edgeStrings[1].indexOf("y= ")+3,edgeStrings[1].indexOf(" type=")));
+		String state2=edgeStrings[1].substring(edgeStrings[1].indexOf("type= ")+3,edgeStrings[1].length());
+		t2.position.x=x2;
+		t2.position.y=y2;
+		t2.TileType=LocationState.Clean;
+		if(state2.contains("Obstacle"))
+			t2.TileType=LocationState.Obstacle;
+		
 	}
 
 	private void InformationByEnvironment(
@@ -160,13 +220,25 @@ public class PeluriaVacuumAgentProgramv2 implements AgentProgram {
 }
 
 class TileNode {
+	public Point position;
+	public LocationState TileType;
+	
+	public TileNode() {
+		position=new Point();
+		TileType=LocationState.Clean;
+	}
+	
 	public TileNode(Point p, boolean isObstacle) {
 		this.position = p;
 		if (isObstacle) {
 			TileType = LocationState.Obstacle;
-		}
+		}else
+			TileType=LocationState.Clean;
 	}
 
-	public Point position;
-	public LocationState TileType;
+	
+	@Override
+	public String toString() {
+		return "x= "+position.x+" y= "+position.y+" type= "+TileType.name();
+	}
 }
