@@ -127,7 +127,7 @@ public class PeluriaVacuumAgentProgramv2 implements AgentProgram {
 
 	private void changeDirection() {
 		Random rand = new Random();
-		int rand_int = rand.nextInt(3);
+		int rand_int = rand.nextInt(4);
 		switch (rand_int) {
 		case 0:
 			currentDirection = getActionFromName("up");
