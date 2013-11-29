@@ -114,6 +114,7 @@ public class PeluriaVacuumAgentProgramv2 implements AgentProgram {
 		TileNode nextTileNode = new TileNode(nextPosition, false);
 		graphMap.addVertex(nextTileNode);
 		graphMap.addEdge(getFileFromPoint(currentPosition),nextTileNode);
+		
 	}
 
 	private TileNode getFileFromPoint(Point p) {
