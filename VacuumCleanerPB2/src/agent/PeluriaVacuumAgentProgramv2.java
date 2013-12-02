@@ -26,6 +26,7 @@ public class PeluriaVacuumAgentProgramv2 implements AgentProgram {
 	private Point currentPosition;
 	private Point nextPosition;
 	private double currentEnergy;
+	private AgentStatus status = AgentStatus.SuckAndSearch;
 
 	// dimension of enviroment
 	private int N;
@@ -182,9 +183,12 @@ public class PeluriaVacuumAgentProgramv2 implements AgentProgram {
 		} else if (currentDirection.equals(getActionFromName("right"))) {
 			nextPosition.y = currentPosition.y + 1;
 		}
-		TileNode nextTileNode = new TileNode(nextPosition, false);
-		graphMap.addVertex(nextTileNode);
-		graphMap.addEdge(getTileFromPoint(currentPosition),nextTileNode);
+		
+		if(getTileFromPoint(nextPosition)==null){
+			TileNode nextTileNode = new TileNode(nextPosition, false);
+			graphMap.addVertex(nextTileNode);			
+			graphMap.addEdge(getTileFromPoint(currentPosition),nextTileNode);
+		}
 		
 	}
 
