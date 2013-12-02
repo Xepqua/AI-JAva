@@ -231,6 +231,7 @@ public class PeluriaVacuumAgentProgramv2 implements AgentProgram {
 
 	private Point getNearestUnvisitedPoint() {
 		// TODO Ritorna il punto con path minimo rispetto la posizione dell'agente
+		//va calcolato un nuovo grafo con punti e eliminando gli ostacoli
 		return null;
 	}
 
