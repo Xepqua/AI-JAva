@@ -15,12 +15,17 @@ import aima.core.agent.impl.DynamicAction;
 import core.LocalVacuumEnvironmentPerceptTaskEnvironmentB;
 import core.VacuumEnvironment.LocationState;
 
+
+enum AgentStatus{
+	FindBase, SuckAndSearch, ReturnedBase, CheckBefore
+}
 public class PeluriaVacuumAgentProgramv2 implements AgentProgram {
 
 	private Action currentDirection;
 	private Point baseLocation;
 	private Point currentPosition;
 	private Point nextPosition;
+	private double currentEnergy;
 
 	// dimension of enviroment
 	private int N;
@@ -135,7 +140,13 @@ public class PeluriaVacuumAgentProgramv2 implements AgentProgram {
 		M = environmentPercept.getM();
 		actionEnergyCosts = environmentPercept.getActionEnergyCosts();
 		isMovedLastTime = environmentPercept.isMovedLastTime();
-
+		
+		if(environmentPercept.isOnBase()){
+			baseLocation = (Point) currentPosition.clone();
+		}
+		
+		currentEnergy = environmentPercept.getCurrentEnergy();
+		
 		if (environmentPercept.getState().getLocState()
 				.equals(LocationState.Dirty))
 			tilesWhereImIsDirty = true;
