@@ -1,6 +1,7 @@
 package agent;
 
 import java.awt.Point;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
@@ -27,6 +28,7 @@ public class PeluriaVacuumAgentProgramv2 implements AgentProgram {
 	private Point nextPosition;
 	private double currentEnergy;
 	private AgentStatus status = AgentStatus.SuckAndSearch;
+	
 
 	// dimension of enviroment
 	private int N;
@@ -201,26 +203,46 @@ public class PeluriaVacuumAgentProgramv2 implements AgentProgram {
 	}
 
 	private void changeDirection() {
-		Random rand = new Random();
-		int rand_int = rand.nextInt(4);
-		switch (rand_int) {
-		case 0:
-			currentDirection = getActionFromName("up");
-			break;
-		case 1:
-			currentDirection = getActionFromName("down");
-			break;
-		case 2:
-			currentDirection = getActionFromName("left");
-			break;
-		case 3:
-			currentDirection = getActionFromName("right");
-			break;
-
-		default:
-			currentDirection = getActionFromName("up");
-			break;
+		
+		List<Point> unvisitedPoint=getUnvisitedPoint(currentPosition);
+		if(unvisitedPoint.size()!=0){
+			Random r=new Random();
+			currentDirection=pointToTheAction(unvisitedPoint.get(r.nextInt(unvisitedPoint.size())));
+		}else{
+			
+			unvisitedPoint=getTotalUnvisitedPoint();
+			Point nearestUnvisited=getNearestUnvisitedPoint();
+			
+			
 		}
+		
+	}
+
+	private Point getNearestUnvisitedPoint() {
+		// TODO Ritorna il punto con path minimo rispetto la posizione dell'agente
+		return null;
+	}
+
+	private List<Point> getTotalUnvisitedPoint() {
+		// TODO Ritorna una lista di punti non obstacle che hanno dei vicini non visitati
+		return null;
+	}
+
+	private List<Point> getUnvisitedPoint(Point point) {
+		//TODO Ritorna una lista di punti non visitati vicini a point
+		return null;
+	}
+	
+	private Action pointToTheAction(Point pollFirst) {
+		if(pollFirst.x == currentPosition.x +1)
+			return getActionFromName("down");
+		if(pollFirst.x == currentPosition.x -1)
+			return getActionFromName("up");
+		if(pollFirst.y == currentPosition.y +1)
+			return getActionFromName("right");
+		if(pollFirst.y == currentPosition.y -1)
+			return getActionFromName("left");
+		return null;
 	}
 
 	public Action getActionFromName(final String actionName) {
