@@ -24,7 +24,7 @@ enum AgentStatus{
 public class PeluriaVacuumAgentProgramv2 implements AgentProgram {
 
 	private Action currentDirection;
-	private LinkedList<Action> nextDirections;
+	private LinkedList<Action> nextDirections=new LinkedList<>();
 	
 	private Point baseLocation;
 	private Point currentPosition;
