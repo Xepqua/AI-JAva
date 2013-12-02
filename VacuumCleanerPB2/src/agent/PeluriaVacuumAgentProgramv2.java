@@ -23,6 +23,8 @@ enum AgentStatus{
 public class PeluriaVacuumAgentProgramv2 implements AgentProgram {
 
 	private Action currentDirection;
+	private List<Action> nextDirections;
+	
 	private Point baseLocation;
 	private Point currentPosition;
 	private Point nextPosition;
@@ -212,10 +214,15 @@ public class PeluriaVacuumAgentProgramv2 implements AgentProgram {
 			
 			unvisitedPoint=getTotalUnvisitedPoint();
 			Point nearestUnvisited=getNearestUnvisitedPoint();
-			
+			nextDirections=getNextDirectionFromPoint(nearestUnvisited);
 			
 		}
 		
+	}
+
+	private List<Action> getNextDirectionFromPoint(Point nearestUnvisited) {
+		// TODO RItorna le prossime direzioni per arrivare al punto nearestUnvisited
+		return null;
 	}
 
 	private Point getNearestUnvisitedPoint() {
