@@ -224,6 +224,8 @@ public class PeluriaVacuumAgentProgramv2 implements AgentProgram {
 		
 	}
 
+	
+	//FIXME ALESSANDRA
 	private LinkedList<Action> getNextDirectionFromPoint(Point nearestUnvisited) {
 		// TODO RItorna le prossime direzioni per arrivare al punto nearestUnvisited
 		/*
@@ -236,6 +238,8 @@ public class PeluriaVacuumAgentProgramv2 implements AgentProgram {
 		return null;
 	}
 
+	
+	//FIXME CARMELO
 	private Point getNearestUnvisitedPoint(List<Point> unvisitedPoint) {
 		// TODO Ritorna il punto con path minimo rispetto la posizione dell'agente
 		//va calcolato un nuovo grafo con punti e eliminando gli ostacoli
@@ -248,11 +252,13 @@ public class PeluriaVacuumAgentProgramv2 implements AgentProgram {
 		return null;
 	}
 
+	//FIXME CARMELO
 	private List<Point> getTotalUnvisitedPoint() {
 		// TODO Ritorna una lista di punti non obstacle che hanno dei vicini non visitati
 		return null;
 	}
 
+	//FIXME ALESSANDRA
 	private List<Point> getUnvisitedPoint(Point point) {
 		//TODO Ritorna una lista di punti non visitati vicini a point
 		
