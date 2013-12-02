@@ -217,7 +217,7 @@ public class PeluriaVacuumAgentProgramv2 implements AgentProgram {
 		}else{
 			
 			unvisitedPoint=getTotalUnvisitedPoint();
-			Point nearestUnvisited=getNearestUnvisitedPoint();
+			Point nearestUnvisited=getNearestUnvisitedPoint(unvisitedPoint);
 			nextDirections=getNextDirectionFromPoint(nearestUnvisited);
 			
 		}
@@ -226,12 +226,25 @@ public class PeluriaVacuumAgentProgramv2 implements AgentProgram {
 
 	private LinkedList<Action> getNextDirectionFromPoint(Point nearestUnvisited) {
 		// TODO RItorna le prossime direzioni per arrivare al punto nearestUnvisited
+		/*
+		 * Vecchio agente return to the base
+		 * 
+		 * deve calcolare djikstra dalla current position al punto nearestUnvisited
+		 * Una volta calcolato il percorso deve calcolare la lista delle direzioni
+		 * Trasforma la lista dei punti in lista di direzioni
+		 */
 		return null;
 	}
 
-	private Point getNearestUnvisitedPoint() {
+	private Point getNearestUnvisitedPoint(List<Point> unvisitedPoint) {
 		// TODO Ritorna il punto con path minimo rispetto la posizione dell'agente
 		//va calcolato un nuovo grafo con punti e eliminando gli ostacoli
+		//findNearestDirtyTiles programma 1
+		/*
+		 * Si calcola il nuovo grafo eliminando gli ostacoli
+		 * il Path è calcolato da currentPosition a ogni punto di univisitedPoint
+		 * ritorna un punto di unvisitedPoint più vicino. con path più piccolo
+		 */
 		return null;
 	}
 
@@ -242,6 +255,10 @@ public class PeluriaVacuumAgentProgramv2 implements AgentProgram {
 
 	private List<Point> getUnvisitedPoint(Point point) {
 		//TODO Ritorna una lista di punti non visitati vicini a point
+		
+		/*
+		 * Questa serve in getTotalUnvisitedPoint()
+		 */
 		return null;
 	}
 	
