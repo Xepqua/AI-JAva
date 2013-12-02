@@ -1,6 +1,7 @@
 package agent;
 
 import java.awt.Point;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -23,7 +24,7 @@ enum AgentStatus{
 public class PeluriaVacuumAgentProgramv2 implements AgentProgram {
 
 	private Action currentDirection;
-	private List<Action> nextDirections;
+	private LinkedList<Action> nextDirections;
 	
 	private Point baseLocation;
 	private Point currentPosition;
@@ -69,8 +70,11 @@ public class PeluriaVacuumAgentProgramv2 implements AgentProgram {
 		}
 
 		// return true if in current direction there is an obstacle
-		if (!isMovedLastTime())
+		if (!isMovedLastTime() && nextDirections.size()==0)
 			changeDirection();
+		else{
+			currentDirection=nextDirections.pollFirst();
+		}
 
 		// add in a graph a tile
 		updateMap();
@@ -220,7 +224,7 @@ public class PeluriaVacuumAgentProgramv2 implements AgentProgram {
 		
 	}
 
-	private List<Action> getNextDirectionFromPoint(Point nearestUnvisited) {
+	private LinkedList<Action> getNextDirectionFromPoint(Point nearestUnvisited) {
 		// TODO RItorna le prossime direzioni per arrivare al punto nearestUnvisited
 		return null;
 	}
