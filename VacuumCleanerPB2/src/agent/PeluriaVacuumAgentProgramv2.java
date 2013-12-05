@@ -1,12 +1,15 @@
 package agent;
 
 import java.awt.Point;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import org.jgrapht.Graph;
 import org.jgrapht.UndirectedGraph;
+import org.jgrapht.alg.DijkstraShortestPath;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleGraph;
 
@@ -249,15 +252,96 @@ public class PeluriaVacuumAgentProgramv2 implements AgentProgram {
 		 * il Path è calcolato da currentPosition a ogni punto di univisitedPoint
 		 * ritorna un punto di unvisitedPoint più vicino. con path più piccolo
 		 */
-		return null;
+		
+		UndirectedGraph<TileNode, DefaultEdge> graph_temp = graphMap;
+		for(TileNode tileNode : graph_temp.vertexSet()){
+			if(tileNode.TileType == LocationState.Obstacle){
+				ArrayList<TileNode> nodeNeigh = new ArrayList<>();
+				for(TileNode tileNode2 : graph_temp.vertexSet()){
+					if(graph_temp.containsEdge(tileNode, tileNode2)){
+						nodeNeigh.add(tileNode2);
+					}
+				}
+				for (int i = 0; i < nodeNeigh.size(); i++) {
+					graph_temp.removeEdge(tileNode, nodeNeigh.get(i));
+				}
+				graph_temp.removeVertex(tileNode);
+			}
+		}
+		Point pointToReturn = new Point();
+		double lengthPath = Integer.MAX_VALUE;
+		for (int i = 0; i < unvisitedPoint.size(); i++) {
+			TileNode pointToArrive = getTileNode(unvisitedPoint.get(i));
+			TileNode currPos = getTileNode(currentPosition);
+			DijkstraShortestPath<TileNode, DefaultEdge> path = new DijkstraShortestPath<TileNode, DefaultEdge>(graph_temp, currPos, pointToArrive);
+			if(path.getPathLength() < lengthPath){
+				pointToReturn = pointToArrive.position;
+			}
+			
+		}
+		
+		return pointToReturn;
+	}
+
+	
+	private TileNode getTileNode(Point point) {
+		return new TileNode(point, false);
 	}
 
 	//FIXME CARMELO
 	private List<Point> getTotalUnvisitedPoint() {
 		// TODO Ritorna una lista di punti non obstacle che hanno dei vicini non visitati
-		return null;
+		
+		List<Point> pointWhereThereAreNeighborhoodUnvisited = new ArrayList<Point>();
+		if(graphMap != null){
+			for (TileNode tileNode : graphMap.vertexSet()) {
+				if(tileNode.TileType != LocationState.Obstacle){
+					if(neighborhoodUnvisited(tileNode)){
+						pointWhereThereAreNeighborhoodUnvisited.add(tileNode.position);
+					}
+				}
+			}
+		}
+		
+		return pointWhereThereAreNeighborhoodUnvisited;
 	}
 
+	private boolean neighborhoodUnvisited(TileNode tileNode) {
+		// Anche se ne ha solo uno ritorna true
+		// NxM è la dimensione, quindi N righe e M colonne
+		boolean unvisited = false;
+		List<Point> tmp = new ArrayList<>();
+		if (tileNode.position.x > 0) {
+			tmp.add(new Point(tileNode.position.x - 1, tileNode.position.y));
+		}
+		if (tileNode.position.y > 0) {
+			tmp.add(new Point(tileNode.position.x, tileNode.position.y - 1));
+		}
+		if (tileNode.position.x < N) {
+			tmp.add(new Point(tileNode.position.x + 1, tileNode.position.y));
+		}
+		if (tileNode.position.y < M) {
+			tmp.add(new Point(tileNode.position.x, tileNode.position.y + 1));
+		}
+		int count = 0;
+		for (TileNode node : graphMap.vertexSet()) {
+			if(isNeighbours(tileNode.position, node.position)){
+				count++;
+			}
+		}
+		if(tmp.size() < count)
+			unvisited = true;
+		
+		return unvisited;
+	}
+
+	private boolean isNeighbours(Point p, Point p2) {
+		if ((p.x == p2.x - 1) || (p.y == p2.y - 1) || (p.x == p2.x + 1) || (p.y == p2.y + 1) ) {
+			return true;
+		}
+		return false;
+	}
+	
 	//FIXME ALESSANDRA
 	private List<Point> getUnvisitedPoint(Point point) {
 		//TODO Ritorna una lista di punti non visitati vicini a point
