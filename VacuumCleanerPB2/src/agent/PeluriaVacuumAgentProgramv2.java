@@ -2,6 +2,7 @@ package agent;
 
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -20,21 +21,20 @@ import aima.core.agent.impl.DynamicAction;
 import core.LocalVacuumEnvironmentPerceptTaskEnvironmentB;
 import core.VacuumEnvironment.LocationState;
 
-
-enum AgentStatus{
+enum AgentStatus {
 	FindBase, SuckAndSearch, ReturnedBase, CheckBefore
 }
+
 public class PeluriaVacuumAgentProgramv2 implements AgentProgram {
 
 	private Action currentDirection;
-	private LinkedList<Action> nextDirections=new LinkedList<>();
-	
+	private LinkedList<Action> nextDirections = new LinkedList<>();
+
 	private Point baseLocation;
 	private Point currentPosition;
 	private Point nextPosition;
 	private double currentEnergy;
 	private AgentStatus status = AgentStatus.SuckAndSearch;
-	
 
 	// dimension of enviroment
 	private int N;
@@ -49,7 +49,6 @@ public class PeluriaVacuumAgentProgramv2 implements AgentProgram {
 
 	@Override
 	public Action execute(Percept percept) {
-		
 
 		final LocalVacuumEnvironmentPerceptTaskEnvironmentB environmentPercept = (LocalVacuumEnvironmentPerceptTaskEnvironmentB) percept;
 
@@ -73,76 +72,87 @@ public class PeluriaVacuumAgentProgramv2 implements AgentProgram {
 		}
 
 		// return true if in current direction there is an obstacle
-		if (!isMovedLastTime() && nextDirections.size()==0)
+		if (!isMovedLastTime() && nextDirections.size() == 0)
 			changeDirection();
-		else{
-			currentDirection=nextDirections.pollFirst();
+		else {
+			currentDirection = nextDirections.pollFirst();
 		}
 
 		// add in a graph a tile
 		updateMap();
-		
+
 		return currentDirection;
 
 	}
 
-//Print the grahMap
+	// Print the grahMap
 	private void printGraph() {
 		System.out.println("---------START-------");
-		int maxN=N*3,maxM=M*3;
+		int maxN = N * 3, maxM = M * 3;
 		int m[][] = new int[maxN][maxM];
-		for(int i=0;i<maxN;i++)
-			for(int j=0;j<maxM;j++)
-				m[i][j]=0;
-		
-		for(TileNode t:graphMap.vertexSet()){
+		for (int i = 0; i < maxN; i++)
+			for (int j = 0; j < maxM; j++)
+				m[i][j] = 0;
 
-			if(t.TileType==LocationState.Obstacle)
-				m[t.position.x+N][t.position.y+M]=2;
+		for (TileNode t : graphMap.vertexSet()) {
+
+			if (t.TileType == LocationState.Obstacle)
+				m[t.position.x + N][t.position.y + M] = 2;
 			else
-				m[t.position.x+N][t.position.y+M]=1;
+				m[t.position.x + N][t.position.y + M] = 1;
 
-			
 		}
-		
-		for(int i=0;i<maxN;i++){
-			for(int j=0;j<maxM;j++)
-				if(i-N==currentPosition.x && j-M==currentPosition.y)
+
+		for (int i = 0; i < maxN; i++) {
+			for (int j = 0; j < maxM; j++)
+				if (i - N == currentPosition.x && j - M == currentPosition.y)
 					System.out.print("@");
-				else if(m[i][j]==1)
+				else if (m[i][j] == 1)
 					System.out.print("o");
-				else if(m[i][j]==0)
+				else if (m[i][j] == 0)
 					System.out.print(" ");
 				else
 					System.out.print("#");
 			System.out.println("");
 		}
 		System.out.println("-----------END--------");
-		
+
 	}
-	
-//get TileNode from Edge
-	private void getTileNodeFromEdge(DefaultEdge e,TileNode t1,TileNode t2){
-		String edgeStrings[]=e.toString().split(":");
-		int x1=Integer.valueOf(edgeStrings[0].substring(edgeStrings[0].indexOf("x= ")+3,edgeStrings[0].indexOf(" y")));
-		int y1=Integer.valueOf(edgeStrings[0].substring(edgeStrings[0].indexOf("y= ")+3,edgeStrings[0].indexOf(" type=")));
-		String state1=edgeStrings[0].substring(edgeStrings[0].indexOf("type= ")+3,edgeStrings[0].length());
 
-		t1.position.x=x1;
-		t1.position.y=y1;
-		t1.TileType=LocationState.Clean;
-		if(state1.equals("Obstacle"))
-			t1.TileType=LocationState.Obstacle;
+	// get TileNode from Edge
+	private void getTileNodeFromEdge(DefaultEdge e, TileNode t1, TileNode t2) {
+		String edgeStrings[] = e.toString().split(":");
+		int x1 = Integer
+				.valueOf(edgeStrings[0].substring(
+						edgeStrings[0].indexOf("x= ") + 3,
+						edgeStrings[0].indexOf(" y")));
+		int y1 = Integer.valueOf(edgeStrings[0].substring(
+				edgeStrings[0].indexOf("y= ") + 3,
+				edgeStrings[0].indexOf(" type=")));
+		String state1 = edgeStrings[0].substring(
+				edgeStrings[0].indexOf("type= ") + 3, edgeStrings[0].length());
 
-		int x2=Integer.valueOf(edgeStrings[1].substring(edgeStrings[1].indexOf("x= ")+3,edgeStrings[1].indexOf(" y")));
-		int y2=Integer.valueOf(edgeStrings[1].substring(edgeStrings[1].indexOf("y= ")+3,edgeStrings[1].indexOf(" type=")));
-		String state2=edgeStrings[1].substring(edgeStrings[1].indexOf("type= ")+3,edgeStrings[1].length());
-		t2.position.x=x2;
-		t2.position.y=y2;
-		t2.TileType=LocationState.Clean;
-		if(state2.contains("Obstacle"))
-			t2.TileType=LocationState.Obstacle;
-		
+		t1.position.x = x1;
+		t1.position.y = y1;
+		t1.TileType = LocationState.Clean;
+		if (state1.equals("Obstacle"))
+			t1.TileType = LocationState.Obstacle;
+
+		int x2 = Integer
+				.valueOf(edgeStrings[1].substring(
+						edgeStrings[1].indexOf("x= ") + 3,
+						edgeStrings[1].indexOf(" y")));
+		int y2 = Integer.valueOf(edgeStrings[1].substring(
+				edgeStrings[1].indexOf("y= ") + 3,
+				edgeStrings[1].indexOf(" type=")));
+		String state2 = edgeStrings[1].substring(
+				edgeStrings[1].indexOf("type= ") + 3, edgeStrings[1].length());
+		t2.position.x = x2;
+		t2.position.y = y2;
+		t2.TileType = LocationState.Clean;
+		if (state2.contains("Obstacle"))
+			t2.TileType = LocationState.Obstacle;
+
 	}
 
 	private void InformationByEnvironment(
@@ -152,13 +162,13 @@ public class PeluriaVacuumAgentProgramv2 implements AgentProgram {
 		M = environmentPercept.getM();
 		actionEnergyCosts = environmentPercept.getActionEnergyCosts();
 		isMovedLastTime = environmentPercept.isMovedLastTime();
-		
-		if(environmentPercept.isOnBase()){
+
+		if (environmentPercept.isOnBase()) {
 			baseLocation = (Point) currentPosition.clone();
 		}
-		
+
 		currentEnergy = environmentPercept.getCurrentEnergy();
-		
+
 		if (environmentPercept.getState().getLocState()
 				.equals(LocationState.Dirty))
 			tilesWhereImIsDirty = true;
@@ -194,74 +204,79 @@ public class PeluriaVacuumAgentProgramv2 implements AgentProgram {
 		} else if (currentDirection.equals(getActionFromName("right"))) {
 			nextPosition.y = currentPosition.y + 1;
 		}
-		
-		if(getTileFromPoint(nextPosition)==null){
+
+		if (getTileFromPoint(nextPosition) == null) {
 			TileNode nextTileNode = new TileNode(nextPosition, false);
-			graphMap.addVertex(nextTileNode);			
-			graphMap.addEdge(getTileFromPoint(currentPosition),nextTileNode);
+			graphMap.addVertex(nextTileNode);
+			graphMap.addEdge(getTileFromPoint(currentPosition), nextTileNode);
 		}
-		
+
 	}
 
 	private TileNode getTileFromPoint(Point p) {
-		for(TileNode node: graphMap.vertexSet()){
-			if(node.position.equals(p))
+		for (TileNode node : graphMap.vertexSet()) {
+			if (node.position.equals(p))
 				return node;
 		}
 		return null;
 	}
 
 	private void changeDirection() {
-		
-		List<Point> unvisitedPoint=getUnvisitedPoint(currentPosition);
-		if(unvisitedPoint.size()!=0){
-			Random r=new Random();
-			currentDirection=pointToTheAction(unvisitedPoint.get(r.nextInt(unvisitedPoint.size())));
-		}else{
-			
-			unvisitedPoint=getTotalUnvisitedPoint();
-			Point nearestUnvisited=getNearestUnvisitedPoint(unvisitedPoint);
-			nextDirections=getNextDirectionFromPoint(nearestUnvisited);
-			
+
+		List<Point> unvisitedPoint = getUnvisitedPoint(currentPosition);
+		if (unvisitedPoint.size() != 0) {
+			Random r = new Random();
+			currentDirection = pointToTheAction(unvisitedPoint.get(r
+					.nextInt(unvisitedPoint.size())));
+		} else {
+
+			unvisitedPoint = getTotalUnvisitedPoint();
+			Point nearestUnvisited = getNearestUnvisitedPoint(unvisitedPoint);
+			nextDirections = getNextDirectionFromPoint(nearestUnvisited);
+
 		}
-		
+
 	}
 
-	
-	//FIXME ALESSANDRA
+	// FIXME ALESSANDRA
 	private LinkedList<Action> getNextDirectionFromPoint(Point nearestUnvisited) {
-		// TODO RItorna le prossime direzioni per arrivare al punto nearestUnvisited
+		// TODO RItorna le prossime direzioni per arrivare al punto
+		// nearestUnvisited
 		/*
 		 * Vecchio agente return to the base
 		 * 
-		 * deve calcolare djikstra dalla current position al punto nearestUnvisited
-		 * Una volta calcolato il percorso deve calcolare la lista delle direzioni
-		 * Trasforma la lista dei punti in lista di direzioni
+		 * deve calcolare djikstra dalla current position al punto
+		 * nearestUnvisited Una volta calcolato il percorso deve calcolare la
+		 * lista delle direzioni Trasforma la lista dei punti in lista di
+		 * direzioni
 		 */
 		return null;
 	}
 
-	
-	//FIXME CARMELO
+	// FIXME CARMELO
 	private Point getNearestUnvisitedPoint(List<Point> unvisitedPoint) {
-		// TODO Ritorna il punto con path minimo rispetto la posizione dell'agente
-		//va calcolato un nuovo grafo con punti e eliminando gli ostacoli
-		//findNearestDirtyTiles programma 1
+		// TODO Ritorna il punto con path minimo rispetto la posizione
+		// dell'agente
+		// va calcolato un nuovo grafo con punti e eliminando gli ostacoli
+		// findNearestDirtyTiles programma 1
 		/*
-		 * Si calcola il nuovo grafo eliminando gli ostacoli
-		 * il Path è calcolato da currentPosition a ogni punto di univisitedPoint
-		 * ritorna un punto di unvisitedPoint più vicino. con path più piccolo
+		 * Si calcola il nuovo grafo eliminando gli ostacoli il Path è calcolato
+		 * da currentPosition a ogni punto di univisitedPoint ritorna un punto
+		 * di unvisitedPoint più vicino. con path più piccolo
 		 */
-		
+
 		UndirectedGraph<TileNode, DefaultEdge> graph_temp = graphMap;
-		for(TileNode tileNode : graph_temp.vertexSet()){
-			if(tileNode.TileType == LocationState.Obstacle){
+		// da cambiare in un grafo di punti
+		for (TileNode tileNode : graph_temp.vertexSet()) {
+			if (tileNode.TileType == LocationState.Obstacle) {
 				ArrayList<TileNode> nodeNeigh = new ArrayList<>();
-				for(TileNode tileNode2 : graph_temp.vertexSet()){
-					if(graph_temp.containsEdge(tileNode, tileNode2)){
+				for (TileNode tileNode2 : graph_temp.vertexSet()) {
+					if (graph_temp.containsEdge(tileNode, tileNode2)) {
 						nodeNeigh.add(tileNode2);
 					}
 				}
+				// provare se senza questo for si rimuovono anche gli archi
+				// eliminando solo il vertice
 				for (int i = 0; i < nodeNeigh.size(); i++) {
 					graph_temp.removeEdge(tileNode, nodeNeigh.get(i));
 				}
@@ -273,93 +288,82 @@ public class PeluriaVacuumAgentProgramv2 implements AgentProgram {
 		for (int i = 0; i < unvisitedPoint.size(); i++) {
 			TileNode pointToArrive = getTileNode(unvisitedPoint.get(i));
 			TileNode currPos = getTileNode(currentPosition);
-			DijkstraShortestPath<TileNode, DefaultEdge> path = new DijkstraShortestPath<TileNode, DefaultEdge>(graph_temp, currPos, pointToArrive);
-			if(path.getPathLength() < lengthPath){
+			// controllare se funziona l'equals o == tra i tilenode del grafo
+			DijkstraShortestPath<TileNode, DefaultEdge> path = new DijkstraShortestPath<TileNode, DefaultEdge>(
+					graph_temp, currPos, pointToArrive);
+			if (path.getPathLength() < lengthPath) {
+				lengthPath = path.getPathLength();
 				pointToReturn = pointToArrive.position;
 			}
-			
+
 		}
-		
+
 		return pointToReturn;
 	}
 
-	
 	private TileNode getTileNode(Point point) {
 		return new TileNode(point, false);
 	}
 
-	//FIXME CARMELO
+	// FIXME CARMELO
 	private List<Point> getTotalUnvisitedPoint() {
-		// TODO Ritorna una lista di punti non obstacle che hanno dei vicini non visitati
-		
+		// TODO Ritorna una lista di punti non obstacle che hanno dei vicini non
+		// visitati
+
 		List<Point> pointWhereThereAreNeighborhoodUnvisited = new ArrayList<Point>();
-		if(graphMap != null){
+		if (graphMap != null) {
 			for (TileNode tileNode : graphMap.vertexSet()) {
-				if(tileNode.TileType != LocationState.Obstacle){
-					if(neighborhoodUnvisited(tileNode)){
-						pointWhereThereAreNeighborhoodUnvisited.add(tileNode.position);
+				if (tileNode.TileType != LocationState.Obstacle) {
+					if (neighborhoodUnvisited(tileNode)) {
+						pointWhereThereAreNeighborhoodUnvisited
+								.add(tileNode.position);
 					}
 				}
 			}
 		}
-		
+
 		return pointWhereThereAreNeighborhoodUnvisited;
 	}
 
 	private boolean neighborhoodUnvisited(TileNode tileNode) {
-		// Anche se ne ha solo uno ritorna true
-		// NxM è la dimensione, quindi N righe e M colonne
 		boolean unvisited = false;
 		List<Point> tmp = new ArrayList<>();
-		if (tileNode.position.x > 0) {
-			tmp.add(new Point(tileNode.position.x - 1, tileNode.position.y));
-		}
-		if (tileNode.position.y > 0) {
-			tmp.add(new Point(tileNode.position.x, tileNode.position.y - 1));
-		}
-		if (tileNode.position.x < N) {
-			tmp.add(new Point(tileNode.position.x + 1, tileNode.position.y));
-		}
-		if (tileNode.position.y < M) {
-			tmp.add(new Point(tileNode.position.x, tileNode.position.y + 1));
-		}
-		int count = 0;
-		for (TileNode node : graphMap.vertexSet()) {
-			if(isNeighbours(tileNode.position, node.position)){
-				count++;
-			}
-		}
-		if(tmp.size() < count)
+		tmp.add(new Point(tileNode.position.x - 1, tileNode.position.y));
+		tmp.add(new Point(tileNode.position.x, tileNode.position.y - 1));
+		tmp.add(new Point(tileNode.position.x + 1, tileNode.position.y));
+		tmp.add(new Point(tileNode.position.x, tileNode.position.y + 1));
+		for (Point point : tmp) {
 			unvisited = true;
-		
-		return unvisited;
-	}
-
-	private boolean isNeighbours(Point p, Point p2) {
-		if ((p.x == p2.x - 1) || (p.y == p2.y - 1) || (p.x == p2.x + 1) || (p.y == p2.y + 1) ) {
-			return true;
+			for (TileNode node : graphMap.vertexSet()) {
+				if (node.position.equals(point)) {
+					unvisited = false;
+					break;
+				}
+			}
+			if(unvisited)
+				return true;
 		}
 		return false;
 	}
-	
-	//FIXME ALESSANDRA
+
+	// FIXME ALESSANDRA
 	private List<Point> getUnvisitedPoint(Point point) {
-		//TODO Ritorna una lista di punti non visitati vicini a point
-		
+		// TODO Ritorna una lista di punti non visitati vicini a point
+
 		/*
 		 * Questa serve in getTotalUnvisitedPoint()
 		 */
 		return null;
 	}
-	
+
 	private Action pointToTheAction(Point pollFirst) {
-		if(pollFirst.x == currentPosition.x +1)
+		if (pollFirst.x == currentPosition.x + 1)
 			return getActionFromName("down");
-		if(pollFirst.x == currentPosition.x -1)
+		if (pollFirst.x == currentPosition.x - 1)
 			return getActionFromName("up");
-		if(pollFirst.y == currentPosition.y +1)
+		if (pollFirst.y == currentPosition.y + 1)
 			return getActionFromName("right");
-		if(pollFirst.y == currentPosition.y -1)
+		if (pollFirst.y == currentPosition.y - 1)
 			return getActionFromName("left");
 		return null;
 	}
@@ -378,23 +382,23 @@ public class PeluriaVacuumAgentProgramv2 implements AgentProgram {
 class TileNode {
 	public Point position;
 	public LocationState TileType;
-	
+
 	public TileNode() {
-		position=new Point();
-		TileType=LocationState.Clean;
+		position = new Point();
+		TileType = LocationState.Clean;
 	}
-	
+
 	public TileNode(Point p, boolean isObstacle) {
 		this.position = p;
 		if (isObstacle) {
 			TileType = LocationState.Obstacle;
-		}else
-			TileType=LocationState.Clean;
+		} else
+			TileType = LocationState.Clean;
 	}
 
-	
 	@Override
 	public String toString() {
-		return "x= "+position.x+" y= "+position.y+" type= "+TileType.name();
+		return "x= " + position.x + " y= " + position.y + " type= "
+				+ TileType.name();
 	}
 }
