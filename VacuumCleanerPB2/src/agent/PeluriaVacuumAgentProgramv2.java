@@ -314,7 +314,7 @@ public class PeluriaVacuumAgentProgramv2 implements AgentProgram {
 		if (graphMap != null) {
 			for (TileNode tileNode : graphMap.vertexSet()) {
 				if (tileNode.TileType != LocationState.Obstacle) {
-					if (neighborhoodUnvisited(tileNode)) {
+					if (neighborhoodUnvisited(tileNode).size() > 0) {
 						pointWhereThereAreNeighborhoodUnvisited
 								.add(tileNode.position);
 					}
@@ -325,7 +325,8 @@ public class PeluriaVacuumAgentProgramv2 implements AgentProgram {
 		return pointWhereThereAreNeighborhoodUnvisited;
 	}
 
-	private boolean neighborhoodUnvisited(TileNode tileNode) {
+	private List<Point> neighborhoodUnvisited(TileNode tileNode) {
+		List<Point> returnList = new ArrayList<Point>();
 		boolean unvisited = false;
 		List<Point> tmp = new ArrayList<>();
 		tmp.add(new Point(tileNode.position.x - 1, tileNode.position.y));
@@ -340,10 +341,11 @@ public class PeluriaVacuumAgentProgramv2 implements AgentProgram {
 					break;
 				}
 			}
-			if(unvisited)
-				return true;
+			if(unvisited){
+				returnList.add(point);
+			}
 		}
-		return false;
+		return returnList;
 	}
 
 	// FIXME ALESSANDRA
