@@ -205,16 +205,16 @@ public class PeluriaVacuumAgentProgramv2 implements AgentProgram {
 			nextPosition.y = currentPosition.y + 1;
 		}
 
-		if (getTileFromPoint(nextPosition) == null) {
+		if (getTileFromPoint(nextPosition,graphMap) == null) {
 			TileNode nextTileNode = new TileNode(nextPosition, false);
 			graphMap.addVertex(nextTileNode);
-			graphMap.addEdge(getTileFromPoint(currentPosition), nextTileNode);
+			graphMap.addEdge(getTileFromPoint(currentPosition,graphMap), nextTileNode);
 		}
 
 	}
 
-	private TileNode getTileFromPoint(Point p) {
-		for (TileNode node : graphMap.vertexSet()) {
+	private TileNode getTileFromPoint(Point p, UndirectedGraph<TileNode, DefaultEdge> graph) {
+		for (TileNode node : graph.vertexSet()) {
 			if (node.position.equals(p))
 				return node;
 		}
@@ -223,11 +223,11 @@ public class PeluriaVacuumAgentProgramv2 implements AgentProgram {
 
 	private void changeDirection() {
 
-		List<Point> unvisitedPoint = getUnvisitedPoint(currentPosition);
+		List<Point> unvisitedPoint = neighborhoodUnvisited(getTileFromPoint(currentPosition,graphMap));
 		if (unvisitedPoint.size() != 0) {
 			Random r = new Random();
 			currentDirection = pointToTheAction(unvisitedPoint.get(r
-					.nextInt(unvisitedPoint.size())));
+					.nextInt(unvisitedPoint.size())),currentPosition);
 		} else {
 
 			unvisitedPoint = getTotalUnvisitedPoint();
@@ -250,23 +250,54 @@ public class PeluriaVacuumAgentProgramv2 implements AgentProgram {
 		 * lista delle direzioni Trasforma la lista dei punti in lista di
 		 * direzioni
 		 */
-		return null;
+		
+		
+		UndirectedGraph<TileNode, DefaultEdge> graphNoObstacle = cloneGraph();
+		removeObstacleFromGraph(graphNoObstacle);
+		TileNode currentTileNode=getTileFromPoint(currentPosition,graphNoObstacle);
+		TileNode nearestUnvisitedTileNode=getTileFromPoint(nearestUnvisited,graphNoObstacle);
+		DijkstraShortestPath<TileNode, DefaultEdge> path=new DijkstraShortestPath<TileNode, DefaultEdge>(graphNoObstacle,currentTileNode ,nearestUnvisitedTileNode );
+		LinkedList<Action> currentPath=new LinkedList<Action>();
+			
+		//costruct array list path of point 
+		List<DefaultEdge> edgeList=path.getPathEdgeList();
+		for(DefaultEdge e:edgeList){
+			TileNode t1=new TileNode();
+			TileNode t2=new TileNode();
+			getTileNodeFromEdge(e, t1, t2);
+			if(currentPath.size()==0){
+						if(t1.equals(currentTileNode))
+							currentPath.add(pointToTheAction(t2.position, t1.position));
+						else
+							currentPath.add(pointToTheAction(t1.position, t2.position));
+					}else{
+						if(currentPath.get(currentPath.size()-1).equals(t1))
+							currentPath.add(pointToTheAction(t2.position, t1.position));
+						else
+							currentPath.add(pointToTheAction(t1.position, t2.position));
+					}
+				}
+										
+		return currentPath;
+
 	}
+	
+	private UndirectedGraph<TileNode, DefaultEdge> cloneGraph(){
+		UndirectedGraph<TileNode, DefaultEdge> graph_temp = new SimpleGraph<TileNode, DefaultEdge>(DefaultEdge.class);
+		for(TileNode tileNode:graphMap.vertexSet())
+			graph_temp.addVertex((TileNode) tileNode.clone());
 
-	// FIXME CARMELO
-	private Point getNearestUnvisitedPoint(List<Point> unvisitedPoint) {
-		// TODO Ritorna il punto con path minimo rispetto la posizione
-		// dell'agente
-		// va calcolato un nuovo grafo con punti e eliminando gli ostacoli
-		// findNearestDirtyTiles programma 1
-		/*
-		 * Si calcola il nuovo grafo eliminando gli ostacoli il Path è calcolato
-		 * da currentPosition a ogni punto di univisitedPoint ritorna un punto
-		 * di unvisitedPoint più vicino. con path più piccolo
-		 */
-
-		UndirectedGraph<TileNode, DefaultEdge> graph_temp = graphMap;
-		// da cambiare in un grafo di punti
+		for(DefaultEdge e:graphMap.edgeSet()){
+			TileNode t1=new TileNode();
+			TileNode t2=new TileNode();
+			getTileNodeFromEdge(e, t1, t2);
+			graph_temp.addEdge(t1, t2);
+		}
+		
+		return graph_temp;
+	}
+	
+	private void removeObstacleFromGraph(UndirectedGraph<TileNode, DefaultEdge> graph_temp){
 		for (TileNode tileNode : graph_temp.vertexSet()) {
 			if (tileNode.TileType == LocationState.Obstacle) {
 				ArrayList<TileNode> nodeNeigh = new ArrayList<>();
@@ -283,11 +314,28 @@ public class PeluriaVacuumAgentProgramv2 implements AgentProgram {
 				graph_temp.removeVertex(tileNode);
 			}
 		}
+	}
+
+	// FIXME CARMELO
+	private Point getNearestUnvisitedPoint(List<Point> unvisitedPoint) {
+		// TODO Ritorna il punto con path minimo rispetto la posizione
+		// dell'agente
+		// va calcolato un nuovo grafo con punti e eliminando gli ostacoli
+		// findNearestDirtyTiles programma 1
+		/*
+		 * Si calcola il nuovo grafo eliminando gli ostacoli il Path è calcolato
+		 * da currentPosition a ogni punto di univisitedPoint ritorna un punto
+		 * di unvisitedPoint più vicino. con path più piccolo
+		 */
+
+		UndirectedGraph<TileNode, DefaultEdge> graph_temp = cloneGraph();
+		removeObstacleFromGraph(graph_temp);
+
 		Point pointToReturn = new Point();
 		double lengthPath = Integer.MAX_VALUE;
 		for (int i = 0; i < unvisitedPoint.size(); i++) {
-			TileNode pointToArrive = getTileNode(unvisitedPoint.get(i));
-			TileNode currPos = getTileNode(currentPosition);
+			TileNode pointToArrive = getTileFromPoint(unvisitedPoint.get(i),graph_temp);
+			TileNode currPos = getTileFromPoint(currentPosition,graph_temp);
 			// controllare se funziona l'equals o == tra i tilenode del grafo
 			DijkstraShortestPath<TileNode, DefaultEdge> path = new DijkstraShortestPath<TileNode, DefaultEdge>(
 					graph_temp, currPos, pointToArrive);
@@ -301,9 +349,7 @@ public class PeluriaVacuumAgentProgramv2 implements AgentProgram {
 		return pointToReturn;
 	}
 
-	private TileNode getTileNode(Point point) {
-		return new TileNode(point, false);
-	}
+	
 
 	// FIXME CARMELO
 	private List<Point> getTotalUnvisitedPoint() {
@@ -348,24 +394,15 @@ public class PeluriaVacuumAgentProgramv2 implements AgentProgram {
 		return returnList;
 	}
 
-	// FIXME ALESSANDRA
-	private List<Point> getUnvisitedPoint(Point point) {
-		// TODO Ritorna una lista di punti non visitati vicini a point
 
-		/*
-		 * Questa serve in getTotalUnvisitedPoint()
-		 */
-		return null;
-	}
-
-	private Action pointToTheAction(Point pollFirst) {
-		if (pollFirst.x == currentPosition.x + 1)
+	private Action pointToTheAction(Point pollFirst,Point nearPoint) {
+		if (pollFirst.x == nearPoint.x + 1)
 			return getActionFromName("down");
-		if (pollFirst.x == currentPosition.x - 1)
+		if (pollFirst.x == nearPoint.x - 1)
 			return getActionFromName("up");
-		if (pollFirst.y == currentPosition.y + 1)
+		if (pollFirst.y == nearPoint.y + 1)
 			return getActionFromName("right");
-		if (pollFirst.y == currentPosition.y - 1)
+		if (pollFirst.y == nearPoint.y - 1)
 			return getActionFromName("left");
 		return null;
 	}
@@ -396,6 +433,44 @@ class TileNode {
 			TileType = LocationState.Obstacle;
 		} else
 			TileType = LocationState.Clean;
+	}
+	
+	@Override
+	protected Object clone()  {
+		TileNode t=new TileNode();
+		t.position=(Point) this.position.clone();
+		t.TileType=this.TileType;
+		return t;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((TileType == null) ? 0 : TileType.hashCode());
+		result = prime * result
+				+ ((position == null) ? 0 : position.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		TileNode other = (TileNode) obj;
+		if (TileType != other.TileType)
+			return false;
+		if (position == null) {
+			if (other.position != null)
+				return false;
+		} else if (!position.equals(other.position))
+			return false;
+		return true;
 	}
 
 	@Override
