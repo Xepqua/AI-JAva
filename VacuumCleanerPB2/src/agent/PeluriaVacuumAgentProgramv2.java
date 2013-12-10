@@ -1,16 +1,10 @@
 package agent;
 
 import java.awt.Point;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
-import org.jgrapht.Graph;
 import org.jgrapht.UndirectedGraph;
-import org.jgrapht.alg.DijkstraShortestPath;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleGraph;
 
