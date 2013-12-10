@@ -81,16 +81,17 @@ public class PeluriaVacuumAgentProgramv2 implements AgentProgram {
 		currentDirection = nextDirections.pollFirst();
 
 		// add in a graph a tile
-		updateMap();
 		printGraph(graphMap);
+		updateMap();
 
 		return currentDirection;
 
 	}
 
 	// Print the grahMap
-	private void printGraph(UndirectedGraph<TileNode,DefaultEdge> graphMap) {
+	public void printGraph(UndirectedGraph<TileNode,DefaultEdge> graphMap) {
 		System.out.println("---------START-------");
+		System.out.println("NEXT SIZE: "+nextDirections.size());
 		int maxN = N * 3, maxM = M * 3;
 		int m[][] = new int[maxN][maxM];
 		for (int i = 0; i < maxN; i++)

@@ -15,42 +15,41 @@ import core.VacuumEnvironment.LocationState;
 import aima.core.agent.Action;
 
 public class SearchSuckAgentState implements VacuumAgentSate {
-	
+
 	private PeluriaVacuumAgentProgramv2 agent;
 
-	
 	public SearchSuckAgentState(PeluriaVacuumAgentProgramv2 agent) {
-		this.agent=agent;
+		this.agent = agent;
 	}
 
 	@Override
 	public LinkedList<Action> generatePath() {
-		LinkedList<Action> nextDirections=new LinkedList<Action>();
-		
-		Action currentDirection=agent.getCurrentDirection();
-		Point currentPosition=agent.getCurrentPosition();
-		
-		Point nextPoint=agent.getPointToTheAction(currentPosition, currentDirection);
-		
-		if(agent.isMovedLastTime() &&  agent.getTileFromPoint(nextPoint, agent.getGraphMap())==null)
+		LinkedList<Action> nextDirections = new LinkedList<Action>();
+
+		Action currentDirection = agent.getCurrentDirection();
+		Point currentPosition = agent.getCurrentPosition();
+
+		Point nextPoint = agent.getPointToTheAction(currentPosition, currentDirection);
+
+		if (agent.isMovedLastTime() && agent.getTileFromPoint(nextPoint, agent.getGraphMap()) == null)
 			nextDirections.add(currentDirection);
-		else{
-			
-			List<Point> unvisitedPoint = neighborhoodUnvisited(getTileFromPoint(currentPosition,agent.getGraphMap()));
+		else {
+
+			List<Point> unvisitedPoint = neighborhoodUnvisited(getTileFromPoint(currentPosition, agent.getGraphMap()));
 			if (unvisitedPoint.size() != 0) {
 				Random r = new Random();
-				currentDirection = actionToThePoint(unvisitedPoint.get(r.nextInt(unvisitedPoint.size())),currentPosition);
+				currentDirection = actionToThePoint(unvisitedPoint.get(r.nextInt(unvisitedPoint.size())), currentPosition);
 				nextDirections.add(currentDirection);
 			} else {
-	
+
 				unvisitedPoint = getTotalUnvisitedPoint();
 				Point nearestUnvisited = getNearestUnvisitedPoint(unvisitedPoint);
 				nextDirections = getNextDirectionFromPoint(nearestUnvisited);
-	
+
 			}
-			
+
 		}
-		
+
 		return nextDirections;
 	}
 
@@ -58,9 +57,7 @@ public class SearchSuckAgentState implements VacuumAgentSate {
 	public boolean suck() {
 		return true;
 	}
-	
-	
-	
+
 	private TileNode getTileFromPoint(Point p, UndirectedGraph<TileNode, DefaultEdge> graph) {
 		for (TileNode node : graph.vertexSet()) {
 			if (node.position.equals(p))
@@ -68,9 +65,6 @@ public class SearchSuckAgentState implements VacuumAgentSate {
 		}
 		return null;
 	}
-	
-	
-
 
 	// FIXME ALESSANDRA
 	private LinkedList<Action> getNextDirectionFromPoint(Point nearestUnvisited) {
@@ -84,55 +78,61 @@ public class SearchSuckAgentState implements VacuumAgentSate {
 		 * lista delle direzioni Trasforma la lista dei punti in lista di
 		 * direzioni
 		 */
-		
-		
 		UndirectedGraph<TileNode, DefaultEdge> graphNoObstacle = cloneGraph();
 		removeObstacleFromGraph(graphNoObstacle);
-		TileNode currentTileNode=getTileFromPoint(agent.getCurrentPosition(),graphNoObstacle);
-		TileNode nearestUnvisitedTileNode=getTileFromPoint(nearestUnvisited,graphNoObstacle);
-		DijkstraShortestPath<TileNode, DefaultEdge> path=new DijkstraShortestPath<TileNode, DefaultEdge>(graphNoObstacle,currentTileNode ,nearestUnvisitedTileNode );
-		LinkedList<Action> currentPath=new LinkedList<Action>();
-			
-		//costruct array list path of point 
-		List<DefaultEdge> edgeList=path.getPathEdgeList();
-		for(DefaultEdge e:edgeList){
-			TileNode t1=new TileNode();
-			TileNode t2=new TileNode();
+		TileNode currentTileNode = getTileFromPoint(agent.getCurrentPosition(), graphNoObstacle);
+		TileNode nearestUnvisitedTileNode = getTileFromPoint(nearestUnvisited, graphNoObstacle);
+		DijkstraShortestPath<TileNode, DefaultEdge> path = new DijkstraShortestPath<TileNode, DefaultEdge>(graphNoObstacle, currentTileNode, nearestUnvisitedTileNode);
+		LinkedList<Action> currentActionPath = new LinkedList<Action>();
+		LinkedList<Point> currentPointPath = new LinkedList<Point>();
+
+		// costruct array list path of point
+		List<DefaultEdge> edgeList = path.getPathEdgeList();
+		for (DefaultEdge e : edgeList) {
+			TileNode t1 = new TileNode();
+			TileNode t2 = new TileNode();
 			getTileNodeFromEdge(e, t1, t2);
-			if(currentPath.size()==0){
-						if(t1.equals(currentTileNode))
-							currentPath.add(actionToThePoint(t2.position, t1.position));
-						else
-							currentPath.add(actionToThePoint(t1.position, t2.position));
-					}else{
-						if(currentPath.get(currentPath.size()-1).equals(t1))
-							currentPath.add(actionToThePoint(t2.position, t1.position));
-						else
-							currentPath.add(actionToThePoint(t1.position, t2.position));
-					}
+			if (currentActionPath.size() == 0) {
+				if (t1.position.equals(currentTileNode.position)){
+					currentActionPath.add(actionToThePoint(t2.position, t1.position));
+					currentPointPath.add(t2.position);
+				}else{
+					currentActionPath.add(actionToThePoint(t1.position, t2.position));
+					currentPointPath.add(t1.position);
 				}
-										
-		return currentPath;
+			} else {
+				if (currentPointPath.getLast().equals(t1.position)){
+					currentActionPath.add(actionToThePoint(t2.position, t1.position));
+					currentPointPath.add(t2.position);
+				}else{
+					currentActionPath.add(actionToThePoint(t1.position, t2.position));
+					currentPointPath.add(t1.position);
+				}
+			}
+		}
+
+
+		return currentActionPath;
 
 	}
-	
-	private UndirectedGraph<TileNode, DefaultEdge> cloneGraph(){
+
+	private UndirectedGraph<TileNode, DefaultEdge> cloneGraph() {
 		UndirectedGraph<TileNode, DefaultEdge> graph_temp = new SimpleGraph<TileNode, DefaultEdge>(DefaultEdge.class);
-		for(TileNode tileNode:agent.getGraphMap().vertexSet())
+		for (TileNode tileNode : agent.getGraphMap().vertexSet())
 			graph_temp.addVertex((TileNode) tileNode.clone());
 
-		for(DefaultEdge e:agent.getGraphMap().edgeSet()){
-			TileNode t1=new TileNode();
-			TileNode t2=new TileNode();
+		for (DefaultEdge e : agent.getGraphMap().edgeSet()) {
+			TileNode t1 = new TileNode();
+			TileNode t2 = new TileNode();
 			getTileNodeFromEdge(e, t1, t2);
 			graph_temp.addEdge(t1, t2);
 		}
-		
+
 		return graph_temp;
 	}
-	
-	private void removeObstacleFromGraph(UndirectedGraph<TileNode, DefaultEdge> graph_temp){
-		ArrayList<TileNode> tileNodeToRemove=new ArrayList<TileNode>();
+
+	private void removeObstacleFromGraph(UndirectedGraph<TileNode, DefaultEdge> graph_temp) {
+		ArrayList<TileNode> tileNodeToRemove = new ArrayList<TileNode>();
 		for (TileNode tileNode : graph_temp.vertexSet()) {
 			if (tileNode.TileType == LocationState.Obstacle) {
 				ArrayList<TileNode> nodeNeigh = new ArrayList<>();
@@ -149,7 +149,7 @@ public class SearchSuckAgentState implements VacuumAgentSate {
 				tileNodeToRemove.add(tileNode);
 			}
 		}
-		for(TileNode tileRemoved:tileNodeToRemove)
+		for (TileNode tileRemoved : tileNodeToRemove)
 			graph_temp.removeVertex(tileRemoved);
 	}
 
@@ -171,11 +171,10 @@ public class SearchSuckAgentState implements VacuumAgentSate {
 		Point pointToReturn = new Point();
 		double lengthPath = Integer.MAX_VALUE;
 		for (int i = 0; i < unvisitedPoint.size(); i++) {
-			TileNode pointToArrive = getTileFromPoint(unvisitedPoint.get(i),graph_temp);
-			TileNode currPos = getTileFromPoint(agent.getCurrentPosition(),graph_temp);
+			TileNode pointToArrive = getTileFromPoint(unvisitedPoint.get(i), graph_temp);
+			TileNode currPos = getTileFromPoint(agent.getCurrentPosition(), graph_temp);
 			// controllare se funziona l'equals o == tra i tilenode del grafo
-			DijkstraShortestPath<TileNode, DefaultEdge> path = new DijkstraShortestPath<TileNode, DefaultEdge>(
-					graph_temp, currPos, pointToArrive);
+			DijkstraShortestPath<TileNode, DefaultEdge> path = new DijkstraShortestPath<TileNode, DefaultEdge>(graph_temp, currPos, pointToArrive);
 			if (path.getPathLength() < lengthPath) {
 				lengthPath = path.getPathLength();
 				pointToReturn = pointToArrive.position;
@@ -186,8 +185,6 @@ public class SearchSuckAgentState implements VacuumAgentSate {
 		return pointToReturn;
 	}
 
-	
-
 	// FIXME CARMELO
 	private List<Point> getTotalUnvisitedPoint() {
 		// TODO Ritorna una lista di punti non obstacle che hanno dei vicini non
@@ -195,12 +192,11 @@ public class SearchSuckAgentState implements VacuumAgentSate {
 
 		List<Point> pointWhereThereAreNeighborhoodUnvisited = new ArrayList<Point>();
 		for (TileNode tileNode : agent.getGraphMap().vertexSet()) {
-				if (tileNode.TileType != LocationState.Obstacle) {
-					if (neighborhoodUnvisited(tileNode).size() > 0) {
-						pointWhereThereAreNeighborhoodUnvisited
-								.add(tileNode.position);
-					}
+			if (tileNode.TileType != LocationState.Obstacle) {
+				if (neighborhoodUnvisited(tileNode).size() > 0) {
+					pointWhereThereAreNeighborhoodUnvisited.add(tileNode.position);
 				}
+			}
 		}
 
 		return pointWhereThereAreNeighborhoodUnvisited;
@@ -222,39 +218,31 @@ public class SearchSuckAgentState implements VacuumAgentSate {
 					break;
 				}
 			}
-			if(unvisited){
+			if (unvisited) {
 				returnList.add(point);
 			}
 		}
 		return returnList;
 	}
 
-
-	private Action actionToThePoint(Point pollFirst,Point nearPoint) {
-		if (pollFirst.x == nearPoint.x + 1)
+	private Action actionToThePoint(Point nextPosition, Point currentPosition) {
+		if (nextPosition.x == currentPosition.x + 1)
 			return agent.getActionFromName("down");
-		if (pollFirst.x == nearPoint.x - 1)
+		if (nextPosition.x == currentPosition.x - 1)
 			return agent.getActionFromName("up");
-		if (pollFirst.y == nearPoint.y + 1)
+		if (nextPosition.y == currentPosition.y + 1)
 			return agent.getActionFromName("right");
-		if (pollFirst.y == nearPoint.y - 1)
+		if (nextPosition.y == currentPosition.y - 1)
 			return agent.getActionFromName("left");
 		return null;
 	}
-	
-	
+
 	// get TileNode from Edge
 	private void getTileNodeFromEdge(DefaultEdge e, TileNode t1, TileNode t2) {
 		String edgeStrings[] = e.toString().split(":");
-		int x1 = Integer
-				.valueOf(edgeStrings[0].substring(
-						edgeStrings[0].indexOf("x= ") + 3,
-						edgeStrings[0].indexOf(" y")));
-		int y1 = Integer.valueOf(edgeStrings[0].substring(
-				edgeStrings[0].indexOf("y= ") + 3,
-				edgeStrings[0].indexOf(" type=")));
-		String state1 = edgeStrings[0].substring(
-				edgeStrings[0].indexOf("type= ") + 3, edgeStrings[0].length());
+		int x1 = Integer.valueOf(edgeStrings[0].substring(edgeStrings[0].indexOf("x= ") + 3, edgeStrings[0].indexOf(" y")));
+		int y1 = Integer.valueOf(edgeStrings[0].substring(edgeStrings[0].indexOf("y= ") + 3, edgeStrings[0].indexOf(" type=")));
+		String state1 = edgeStrings[0].substring(edgeStrings[0].indexOf("type= ") + 3, edgeStrings[0].length());
 
 		t1.position.x = x1;
 		t1.position.y = y1;
@@ -262,15 +250,9 @@ public class SearchSuckAgentState implements VacuumAgentSate {
 		if (state1.equals("Obstacle"))
 			t1.TileType = LocationState.Obstacle;
 
-		int x2 = Integer
-				.valueOf(edgeStrings[1].substring(
-						edgeStrings[1].indexOf("x= ") + 3,
-						edgeStrings[1].indexOf(" y")));
-		int y2 = Integer.valueOf(edgeStrings[1].substring(
-				edgeStrings[1].indexOf("y= ") + 3,
-				edgeStrings[1].indexOf(" type=")));
-		String state2 = edgeStrings[1].substring(
-				edgeStrings[1].indexOf("type= ") + 3, edgeStrings[1].length());
+		int x2 = Integer.valueOf(edgeStrings[1].substring(edgeStrings[1].indexOf("x= ") + 3, edgeStrings[1].indexOf(" y")));
+		int y2 = Integer.valueOf(edgeStrings[1].substring(edgeStrings[1].indexOf("y= ") + 3, edgeStrings[1].indexOf(" type=")));
+		String state2 = edgeStrings[1].substring(edgeStrings[1].indexOf("type= ") + 3, edgeStrings[1].length());
 		t2.position.x = x2;
 		t2.position.y = y2;
 		t2.TileType = LocationState.Clean;
