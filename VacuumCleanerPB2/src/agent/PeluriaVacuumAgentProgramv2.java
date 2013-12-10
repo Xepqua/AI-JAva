@@ -66,10 +66,8 @@ public class PeluriaVacuumAgentProgramv2 implements AgentProgram {
 		// return true if the agent is in a dirty tile
 		if(tilesWhereImIsDirty && state.suck()){
 			suckLastTime=true;
-			updateMap();
 			return getActionFromName("suck");
-		}else
-			suckLastTime=false;
+		}
 
 		// return true if in current direction there is an obstacle
 //		if (!isMovedLastTime() || nextDirections.size() == 0)
@@ -80,6 +78,8 @@ public class PeluriaVacuumAgentProgramv2 implements AgentProgram {
 		
 		if(nextDirections.size()<=0)
 			nextDirections=state.generatePath();
+		
+		suckLastTime=false;
 			
 		currentDirection = nextDirections.pollFirst();
 
@@ -162,10 +162,16 @@ public class PeluriaVacuumAgentProgramv2 implements AgentProgram {
 	private void updateMap() {
 		nextPosition=getPointToTheAction(currentPosition,currentDirection);
 
-		if (getTileFromPoint(nextPosition,graphMap) == null) {
-			TileNode nextTileNode = new TileNode(nextPosition, false);
-			graphMap.addVertex(nextTileNode);
-			graphMap.addEdge(getTileFromPoint(currentPosition,graphMap), getTileFromPoint(nextPosition,graphMap));
+		TileNode nextTileNode=getTileFromPoint(nextPosition,graphMap);
+		TileNode currentTileNode=getTileFromPoint(currentPosition, graphMap);
+		
+		if ( nextTileNode==null || (!graphMap.containsEdge(nextTileNode,currentTileNode) &&  !graphMap.containsEdge(currentTileNode,nextTileNode))) {
+			if(nextTileNode==null){
+				nextTileNode=new TileNode(nextPosition, false);
+				graphMap.addVertex(nextTileNode);
+			}
+			
+			graphMap.addEdge(currentTileNode, nextTileNode);
 		}
 
 	}
@@ -308,6 +314,14 @@ public class PeluriaVacuumAgentProgramv2 implements AgentProgram {
 
 	public void setMovedLastTime(boolean isMovedLastTime) {
 		this.isMovedLastTime = isMovedLastTime;
+	}
+
+	public boolean isSuckLastTime() {
+		return suckLastTime;
+	}
+
+	public void setSuckLastTime(boolean suckLastTime) {
+		this.suckLastTime = suckLastTime;
 	}
 
 }

@@ -32,9 +32,9 @@ public class SearchSuckAgentState implements VacuumAgentSate {
 
 		Point nextPoint = agent.getPointToTheAction(currentPosition, currentDirection);
 
-		if (agent.isMovedLastTime() && agent.getTileFromPoint(nextPoint, agent.getGraphMap()) == null)
+		if ((agent.isMovedLastTime() || agent.isSuckLastTime())  && agent.getTileFromPoint(nextPoint, agent.getGraphMap()) == null){
 			nextDirections.add(currentDirection);
-		else {
+		}else {
 
 			List<Point> unvisitedPoint = neighborhoodUnvisited(getTileFromPoint(currentPosition, agent.getGraphMap()));
 			if (unvisitedPoint.size() != 0) {
