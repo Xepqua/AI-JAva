@@ -29,6 +29,7 @@ public class PeluriaVacuumAgentProgramv2 implements AgentProgram {
 	private Point nextPosition;
 	private double currentEnergy;
 	private VacuumAgentSate state;
+	private boolean suckLastTime; 
 
 	// dimension of enviroment
 	private int N;
@@ -55,18 +56,20 @@ public class PeluriaVacuumAgentProgramv2 implements AgentProgram {
 			TileNode tileInitial = new TileNode(currentPosition, false);
 			graphMap.addVertex(tileInitial);
 		} else {
-			if (!isMovedLastTime()) {
+			if (!isMovedLastTime() && !suckLastTime) {
 				updateVertexOnGraph(nextPosition, LocationState.Obstacle);
-			} else {
+			} else if(!suckLastTime){
 				currentPosition = nextPosition;
 			}
 		}
 
 		// return true if the agent is in a dirty tile
-		if(false && state.suck()){
-//		if (tilesWhereImIsDirty) {
+		if(tilesWhereImIsDirty && state.suck()){
+			suckLastTime=true;
+			updateMap();
 			return getActionFromName("suck");
-		}
+		}else
+			suckLastTime=false;
 
 		// return true if in current direction there is an obstacle
 //		if (!isMovedLastTime() || nextDirections.size() == 0)
@@ -81,8 +84,8 @@ public class PeluriaVacuumAgentProgramv2 implements AgentProgram {
 		currentDirection = nextDirections.pollFirst();
 
 		// add in a graph a tile
-		printGraph(graphMap);
 		updateMap();
+		printGraph(graphMap);
 
 		return currentDirection;
 
@@ -162,7 +165,7 @@ public class PeluriaVacuumAgentProgramv2 implements AgentProgram {
 		if (getTileFromPoint(nextPosition,graphMap) == null) {
 			TileNode nextTileNode = new TileNode(nextPosition, false);
 			graphMap.addVertex(nextTileNode);
-			graphMap.addEdge(getTileFromPoint(currentPosition,graphMap), nextTileNode);
+			graphMap.addEdge(getTileFromPoint(currentPosition,graphMap), getTileFromPoint(nextPosition,graphMap));
 		}
 
 	}

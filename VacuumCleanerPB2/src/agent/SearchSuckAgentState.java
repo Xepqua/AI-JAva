@@ -8,6 +8,7 @@ import java.util.Random;
 
 import org.jgrapht.UndirectedGraph;
 import org.jgrapht.alg.DijkstraShortestPath;
+import org.jgrapht.graph.AbstractBaseGraph;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleGraph;
 
@@ -117,7 +118,10 @@ public class SearchSuckAgentState implements VacuumAgentSate {
 	}
 
 	private UndirectedGraph<TileNode, DefaultEdge> cloneGraph() {
-		UndirectedGraph<TileNode, DefaultEdge> graph_temp = new SimpleGraph<TileNode, DefaultEdge>(DefaultEdge.class);
+// 		metodo visto da internet per copiare		
+//		UndirectedGraph<TileNode, DefaultEdge> graph_temp = (UndirectedGraph<TileNode, DefaultEdge>) ((AbstractBaseGraph)agent.getGraphMap()).clone();
+
+		UndirectedGraph<TileNode, DefaultEdge> graph_temp = new SimpleGraph<>(DefaultEdge.class);
 		for (TileNode tileNode : agent.getGraphMap().vertexSet())
 			graph_temp.addVertex((TileNode) tileNode.clone());
 
@@ -125,7 +129,8 @@ public class SearchSuckAgentState implements VacuumAgentSate {
 			TileNode t1 = new TileNode();
 			TileNode t2 = new TileNode();
 			getTileNodeFromEdge(e, t1, t2);
-			graph_temp.addEdge(t1, t2);
+			graph_temp.addEdge(getTileFromPoint(t1.position, graph_temp),getTileFromPoint(t2.position, graph_temp));
+
 		}
 
 		return graph_temp;
@@ -135,17 +140,16 @@ public class SearchSuckAgentState implements VacuumAgentSate {
 		ArrayList<TileNode> tileNodeToRemove = new ArrayList<TileNode>();
 		for (TileNode tileNode : graph_temp.vertexSet()) {
 			if (tileNode.TileType == LocationState.Obstacle) {
-				ArrayList<TileNode> nodeNeigh = new ArrayList<>();
 				for (TileNode tileNode2 : graph_temp.vertexSet()) {
 					if (graph_temp.containsEdge(tileNode, tileNode2)) {
-						nodeNeigh.add(tileNode2);
+						graph_temp.removeEdge(tileNode,tileNode2);
+					}else if(graph_temp.containsEdge(tileNode2, tileNode)){
+						graph_temp.removeEdge(tileNode2,tileNode);
 					}
 				}
 				// provare se senza questo for si rimuovono anche gli archi
 				// eliminando solo il vertice
-				for (int i = 0; i < nodeNeigh.size(); i++) {
-					graph_temp.removeEdge(tileNode, nodeNeigh.get(i));
-				}
+
 				tileNodeToRemove.add(tileNode);
 			}
 		}
@@ -166,6 +170,7 @@ public class SearchSuckAgentState implements VacuumAgentSate {
 		 */
 
 		UndirectedGraph<TileNode, DefaultEdge> graph_temp = cloneGraph();
+		
 		removeObstacleFromGraph(graph_temp);
 
 		Point pointToReturn = new Point();
@@ -181,7 +186,6 @@ public class SearchSuckAgentState implements VacuumAgentSate {
 			}
 
 		}
-
 		return pointToReturn;
 	}
 
