@@ -30,15 +30,16 @@ public class SearchSuckAgentState implements VacuumAgentSate {
 		Action currentDirection=agent.getCurrentDirection();
 		Point currentPosition=agent.getCurrentPosition();
 		
+		Point nextPoint=agent.getPointToTheAction(currentPosition, currentDirection);
 		
-		if(agent.isMovedLastTime())
+		if(agent.isMovedLastTime() &&  agent.getTileFromPoint(nextPoint, agent.getGraphMap())==null)
 			nextDirections.add(currentDirection);
 		else{
 			
 			List<Point> unvisitedPoint = neighborhoodUnvisited(getTileFromPoint(currentPosition,agent.getGraphMap()));
 			if (unvisitedPoint.size() != 0) {
 				Random r = new Random();
-				currentDirection = pointToTheAction(unvisitedPoint.get(r.nextInt(unvisitedPoint.size())),currentPosition);
+				currentDirection = actionToThePoint(unvisitedPoint.get(r.nextInt(unvisitedPoint.size())),currentPosition);
 				nextDirections.add(currentDirection);
 			} else {
 	
@@ -67,6 +68,8 @@ public class SearchSuckAgentState implements VacuumAgentSate {
 		}
 		return null;
 	}
+	
+	
 
 
 	// FIXME ALESSANDRA
@@ -98,14 +101,14 @@ public class SearchSuckAgentState implements VacuumAgentSate {
 			getTileNodeFromEdge(e, t1, t2);
 			if(currentPath.size()==0){
 						if(t1.equals(currentTileNode))
-							currentPath.add(pointToTheAction(t2.position, t1.position));
+							currentPath.add(actionToThePoint(t2.position, t1.position));
 						else
-							currentPath.add(pointToTheAction(t1.position, t2.position));
+							currentPath.add(actionToThePoint(t1.position, t2.position));
 					}else{
 						if(currentPath.get(currentPath.size()-1).equals(t1))
-							currentPath.add(pointToTheAction(t2.position, t1.position));
+							currentPath.add(actionToThePoint(t2.position, t1.position));
 						else
-							currentPath.add(pointToTheAction(t1.position, t2.position));
+							currentPath.add(actionToThePoint(t1.position, t2.position));
 					}
 				}
 										
@@ -227,7 +230,7 @@ public class SearchSuckAgentState implements VacuumAgentSate {
 	}
 
 
-	private Action pointToTheAction(Point pollFirst,Point nearPoint) {
+	private Action actionToThePoint(Point pollFirst,Point nearPoint) {
 		if (pollFirst.x == nearPoint.x + 1)
 			return agent.getActionFromName("down");
 		if (pollFirst.x == nearPoint.x - 1)
@@ -238,6 +241,7 @@ public class SearchSuckAgentState implements VacuumAgentSate {
 			return agent.getActionFromName("left");
 		return null;
 	}
+	
 	
 	// get TileNode from Edge
 	private void getTileNodeFromEdge(DefaultEdge e, TileNode t1, TileNode t2) {

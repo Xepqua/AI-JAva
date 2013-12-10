@@ -162,7 +162,19 @@ public class PeluriaVacuumAgentProgramv2 implements AgentProgram {
 
 
 	private void updateMap() {
-		nextPosition = (Point) currentPosition.clone();
+		nextPosition=getPointToTheAction(currentPosition,currentDirection);
+
+		if (getTileFromPoint(nextPosition,graphMap) == null) {
+			TileNode nextTileNode = new TileNode(nextPosition, false);
+			graphMap.addVertex(nextTileNode);
+			graphMap.addEdge(getTileFromPoint(currentPosition,graphMap), nextTileNode);
+		}
+
+	}
+
+	public Point getPointToTheAction(Point currentPosition,Action currentDirection) {
+		Point nextPosition = (Point) currentPosition.clone();
+
 		if (currentDirection.equals(getActionFromName("up"))) {
 			nextPosition.x = currentPosition.x - 1;
 		} else if (currentDirection.equals(getActionFromName("down"))) {
@@ -172,13 +184,8 @@ public class PeluriaVacuumAgentProgramv2 implements AgentProgram {
 		} else if (currentDirection.equals(getActionFromName("right"))) {
 			nextPosition.y = currentPosition.y + 1;
 		}
-
-		if (getTileFromPoint(nextPosition,graphMap) == null) {
-			TileNode nextTileNode = new TileNode(nextPosition, false);
-			graphMap.addVertex(nextTileNode);
-			graphMap.addEdge(getTileFromPoint(currentPosition,graphMap), nextTileNode);
-		}
-
+		
+		return nextPosition;
 	}
 	
 	public TileNode getTileFromPoint(Point p, UndirectedGraph<TileNode, DefaultEdge> graph) {
