@@ -34,7 +34,7 @@ public class CheckBeforeMovesAgentState extends SearchSuckAgentState {
 	public boolean suck() {
 		double currentEnergy= agent.getCurrentEnergy();
 		double suckCost=agent.getActionEnergyCosts().get(agent.getActionFromName("suck"));
-		if( suckCost + movesToReturnBase() < currentEnergy)
+		if( suckCost + movesToReturnBase() <= currentEnergy)
 			return true;
 		VacuumAgentSate returnBase=new ReturnBaseAgentState(agent);
 		agent.setState(returnBase);

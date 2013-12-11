@@ -14,19 +14,7 @@ public class ReturnBaseAgentState extends SearchSuckAgentState {
 	public LinkedList<Action> generatePath() {	
 		
 		LinkedList<Action> nextDirections=getNextDirectionFromPoint(agent.getBaseLocation());
-		nextDirections.add(new Action() {
-			
-			@Override
-			public boolean isNoOp() {
-				return true;
-			}
-			
-			@Override
-			public String toString() {
-				return "NO OP";
-			}
-			
-		});
+		nextDirections.add(agent.getNoOpAction());
 		return nextDirections;
 	}
 	

@@ -6,6 +6,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.text.html.HTMLDocument.HTMLReader.IsindexAction;
+
 import org.jgrapht.UndirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleGraph;
@@ -94,6 +96,10 @@ public class PeluriaVacuumAgentProgramv2 implements AgentProgram {
 		printGraph(graphMap);
 		System.out.println(currentEnergy);
 
+		if(currentEnergy==0){
+			return getNoOpAction();
+		}
+		
 		return currentDirection;
 
 	}
@@ -149,6 +155,10 @@ public class PeluriaVacuumAgentProgramv2 implements AgentProgram {
 		}
 
 		currentEnergy = environmentPercept.getCurrentEnergy();
+		
+		if(! (state instanceof FindBaseAgentState) && ! (state instanceof CheckBeforeMovesAgentState) && ! (state instanceof ReturnBaseAgentState) && currentEnergy<20 ){
+			state=new FindBaseAgentState(this);
+		}
 
 		if (environmentPercept.getState().getLocState()
 				.equals(LocationState.Dirty))
@@ -233,7 +243,21 @@ public class PeluriaVacuumAgentProgramv2 implements AgentProgram {
 		return null;
 	}
 	
-	
+	public Action getNoOpAction(){
+		return new Action() {
+			
+			@Override
+			public boolean isNoOp() {
+				return true;
+			}
+			
+			@Override
+			public String toString() {
+				return "NO OP";
+			}
+			
+		};
+	}
 
 	public Action getCurrentDirection() {
 		return currentDirection;
