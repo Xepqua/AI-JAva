@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<vacuum_istance>
+  <board>
+    <size_n>10</size_n>
+    <size_m>10</size_m>
+    <tile_state x="3" y="2">obstacle</tile_state>
+    <tile_state x="3" y="3">obstacle</tile_state>
+    <tile_state x="3" y="4">obstacle</tile_state>
+    <tile_state x="3" y="5">obstacle</tile_state>
+    <tile_state x="3" y="7">obstacle</tile_state>
+    <tile_state x="5" y="1">obstacle</tile_state>
+    <tile_state x="6" y="5">obstacle</tile_state>
+    <tile_state x="6" y="7">obstacle</tile_state>
+    <tile_state x="8" y="0">obstacle</tile_state>
+    <tile_state x="8" y="6">obstacle</tile_state>
+  </board>
+  <action_costs>
+    <up>1.0</up>
+    <down>1.0</down>
+    <left>1.0</left>
+    <right>1.0</right>
+    <suck>2.0</suck>
+  </action_costs>
+  <agent>
+    <x>6</x>
+    <y>3</y>
+    <energy>20.0</energy>
+  </agent>
+  <base>
+    <x>5</x>
+    <y>3</y>
+  </base>
+</vacuum_istance>

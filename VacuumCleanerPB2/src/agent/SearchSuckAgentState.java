@@ -17,7 +17,7 @@ import aima.core.agent.Action;
 
 public class SearchSuckAgentState implements VacuumAgentSate {
 
-	private PeluriaVacuumAgentProgramv2 agent;
+	protected PeluriaVacuumAgentProgramv2 agent;
 
 	public SearchSuckAgentState(PeluriaVacuumAgentProgramv2 agent) {
 		this.agent = agent;
@@ -64,7 +64,7 @@ public class SearchSuckAgentState implements VacuumAgentSate {
 		return true;
 	}
 
-	private TileNode getTileFromPoint(Point p,
+	protected TileNode getTileFromPoint(Point p,
 			UndirectedGraph<TileNode, DefaultEdge> graph) {
 		for (TileNode node : graph.vertexSet()) {
 			if (node.position.equals(p))
@@ -73,7 +73,7 @@ public class SearchSuckAgentState implements VacuumAgentSate {
 		return null;
 	}
 
-	private LinkedList<Action> getNextDirectionFromPoint(Point nearestUnvisited) {
+	protected LinkedList<Action> getNextDirectionFromPoint(Point nearestUnvisited) {
 		// Ritorna le prossime direzioni per arrivare al punto
 		// nearestUnvisited
 		/*
@@ -128,7 +128,7 @@ public class SearchSuckAgentState implements VacuumAgentSate {
 
 	}
 
-	private UndirectedGraph<TileNode, DefaultEdge> cloneGraph() {
+	protected UndirectedGraph<TileNode, DefaultEdge> cloneGraph() {
 		/*
 		 * metodo visto da internet per copiare // UndirectedGraph<TileNode,
 		 * DefaultEdge> graph_temp = // (UndirectedGraph<TileNode, DefaultEdge>)
@@ -151,7 +151,7 @@ public class SearchSuckAgentState implements VacuumAgentSate {
 		return graph_temp;
 	}
 
-	private void removeObstacleFromGraph(
+	protected void removeObstacleFromGraph(
 			UndirectedGraph<TileNode, DefaultEdge> graph_temp) {
 		ArrayList<TileNode> tileNodeToRemove = new ArrayList<TileNode>();
 		for (TileNode tileNode : graph_temp.vertexSet()) {

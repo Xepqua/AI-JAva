@@ -81,6 +81,10 @@ public class PeluriaVacuumAgentProgramv2 implements AgentProgram {
 		if(nextDirections.size()<=0)
 			nextDirections=state.generatePath();
 		
+		System.out.println("NEXT ACTIONS");
+		for(Action a:nextDirections)
+			System.out.println(a);
+		
 		suckLastTime=false;
 			
 		currentDirection = nextDirections.pollFirst();
@@ -88,7 +92,7 @@ public class PeluriaVacuumAgentProgramv2 implements AgentProgram {
 		// add in a graph a tile
 		updateMap();
 		printGraph(graphMap);
-		System.out.println(graphMap.edgeSet().size());
+		System.out.println(currentEnergy);
 
 		return currentDirection;
 
@@ -140,7 +144,8 @@ public class PeluriaVacuumAgentProgramv2 implements AgentProgram {
 		isMovedLastTime = environmentPercept.isMovedLastTime();
 
 		if (environmentPercept.isOnBase()) {
-			baseLocation = (Point) currentPosition.clone();
+			baseLocation = (Point) nextPosition.clone();
+			state=new CheckBeforeMovesAgentState(this);
 		}
 
 		currentEnergy = environmentPercept.getCurrentEnergy();
@@ -187,7 +192,8 @@ public class PeluriaVacuumAgentProgramv2 implements AgentProgram {
 				}
 			}
 			
-			graphMap.addEdge(currentTileNode, nextTileNode);
+			if(!currentTileNode.position.equals(nextTileNode.position))
+				graphMap.addEdge(currentTileNode, nextTileNode);
 		}
 
 	}
