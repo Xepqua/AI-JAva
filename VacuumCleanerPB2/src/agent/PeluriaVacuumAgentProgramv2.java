@@ -1,7 +1,9 @@
 package agent;
 
 import java.awt.Point;
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import org.jgrapht.UndirectedGraph;
@@ -86,6 +88,7 @@ public class PeluriaVacuumAgentProgramv2 implements AgentProgram {
 		// add in a graph a tile
 		updateMap();
 		printGraph(graphMap);
+		System.out.println(graphMap.edgeSet().size());
 
 		return currentDirection;
 
@@ -169,6 +172,19 @@ public class PeluriaVacuumAgentProgramv2 implements AgentProgram {
 			if(nextTileNode==null){
 				nextTileNode=new TileNode(nextPosition, false);
 				graphMap.addVertex(nextTileNode);
+				
+				List<Point> tmp = new ArrayList<>();
+				tmp.add(new Point(nextTileNode.position.x - 1, nextTileNode.position.y));
+				tmp.add(new Point(nextTileNode.position.x, nextTileNode.position.y - 1));
+				tmp.add(new Point(nextTileNode.position.x + 1, nextTileNode.position.y));
+				tmp.add(new Point(nextTileNode.position.x, nextTileNode.position.y + 1));
+				
+				for(Point p:tmp){
+					TileNode nearTileNode=getTileFromPoint(p, graphMap);
+					if(nearTileNode!=null && graphMap.containsVertex(nearTileNode)){
+						graphMap.addEdge(  nextTileNode, nearTileNode);
+					}
+				}
 			}
 			
 			graphMap.addEdge(currentTileNode, nextTileNode);
@@ -194,8 +210,9 @@ public class PeluriaVacuumAgentProgramv2 implements AgentProgram {
 	
 	public TileNode getTileFromPoint(Point p, UndirectedGraph<TileNode, DefaultEdge> graph) {
 		for (TileNode node : graph.vertexSet()) {
-			if (node.position.equals(p))
+			if (node.position.equals(p)){
 				return node;
+			}
 		}
 		return null;
 	}
