@@ -34,6 +34,8 @@ public class PeluriaVacuumAgentProgramv2 implements AgentProgram {
 	private double currentEnergy;
 	private VacuumAgentSate state;
 	private boolean suckLastTime; 
+	private boolean isOnTheBase=false;
+
 
 	// dimension of enviroment
 	private int N;
@@ -66,6 +68,9 @@ public class PeluriaVacuumAgentProgramv2 implements AgentProgram {
 				currentPosition = nextPosition;
 			}
 		}
+		
+		changeState();
+
 
 		// return true if the agent is in a dirty tile
 		if(tilesWhereImIsDirty && state.suck()){
@@ -102,6 +107,20 @@ public class PeluriaVacuumAgentProgramv2 implements AgentProgram {
 		
 		return currentDirection;
 
+	}
+	
+
+	private void changeState() {
+		if (isOnTheBase && ! (state instanceof CheckBeforeMovesAgentState)) {
+			baseLocation = (Point) currentPosition.clone();
+			state=new CheckBeforeMovesAgentState(this);
+		}
+
+		
+		if(! (state instanceof FindBaseAgentState) && ! (state instanceof CheckBeforeMovesAgentState) && ! (state instanceof ReturnBaseAgentState) && currentEnergy<20 ){
+			state=new FindBaseAgentState(this);
+		}
+		
 	}
 
 	// Print the grahMap
@@ -149,17 +168,9 @@ public class PeluriaVacuumAgentProgramv2 implements AgentProgram {
 		actionEnergyCosts = environmentPercept.getActionEnergyCosts();
 		isMovedLastTime = environmentPercept.isMovedLastTime();
 
-		if (environmentPercept.isOnBase()) {
-			baseLocation = (Point) nextPosition.clone();
-			state=new CheckBeforeMovesAgentState(this);
-		}
-
 		currentEnergy = environmentPercept.getCurrentEnergy();
 		
-		if(! (state instanceof FindBaseAgentState) && ! (state instanceof CheckBeforeMovesAgentState) && ! (state instanceof ReturnBaseAgentState) && currentEnergy<20 ){
-			state=new FindBaseAgentState(this);
-		}
-
+		
 		if (environmentPercept.getState().getLocState()
 				.equals(LocationState.Dirty))
 			tilesWhereImIsDirty = true;
