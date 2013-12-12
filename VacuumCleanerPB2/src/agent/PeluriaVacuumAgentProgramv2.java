@@ -112,7 +112,8 @@ public class PeluriaVacuumAgentProgramv2 implements AgentProgram {
 
 	private void changeState() {
 		if (isOnTheBase && ! (state instanceof CheckBeforeMovesAgentState)) {
-			baseLocation = (Point) currentPosition.clone();
+			if(baseLocation==null)
+				baseLocation = (Point) currentPosition.clone();
 			state=new CheckBeforeMovesAgentState(this);
 		}
 
