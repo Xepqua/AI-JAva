@@ -70,7 +70,7 @@ public class VacuumController extends AgentAppController {
 		logger.log("<simulation-log>");
 		try {
 			while (!this.env.isDone() && !this.frame.simulationPaused()) {
-				Thread.sleep(500);
+				Thread.sleep(100);
 				this.env.step();
 			}
 		} catch (final InterruptedException e) {

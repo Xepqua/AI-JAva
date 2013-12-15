@@ -49,6 +49,9 @@ public class SearchSuckAgentState implements VacuumAgentSate {
 			} else {
 
 				unvisitedPoint = getTotalUnvisitedPoint();
+				if(unvisitedPoint.size()==0){
+					return null;
+				}
 				Point nearestUnvisited = getNearestUnvisitedPoint(unvisitedPoint);
 				nextDirections = getNextDirectionFromPoint(nearestUnvisited);
 

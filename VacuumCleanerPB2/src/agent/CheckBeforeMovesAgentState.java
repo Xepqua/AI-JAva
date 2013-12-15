@@ -18,14 +18,15 @@ public class CheckBeforeMovesAgentState extends SearchSuckAgentState {
 	public LinkedList<Action> generatePath() {
 		double currentEnergy= agent.getCurrentEnergy();
 		LinkedList<Action> nextDirection = super.generatePath();
-		if(nextDirection.size()+movesToReturnBase()<=currentEnergy)
-			return nextDirection;
+
+		if(nextDirection!=null){
+			
+			if(nextDirection.size()+movesToReturnBase()<=currentEnergy)
+				return nextDirection;
+
+		}
 		VacuumAgentSate returnBase=new ReturnBaseAgentState(agent);
 		agent.setState(returnBase);
-		
-		for(Action action:returnBase.generatePath()){
-			System.out.println(action);
-		}
 		
 		return returnBase.generatePath();
 	}

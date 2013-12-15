@@ -88,9 +88,9 @@ public class PeluriaVacuumAgentProgramv2 implements AgentProgram {
 		if(nextDirections.size()<=0)
 			nextDirections=state.generatePath();
 		
-		System.out.println("NEXT ACTIONS");
-		for(Action a:nextDirections)
-			System.out.println(a);
+//		System.out.println("NEXT ACTIONS");
+//		for(Action a:nextDirections)
+//			System.out.println(a);
 		
 		suckLastTime=false;
 			
@@ -98,7 +98,7 @@ public class PeluriaVacuumAgentProgramv2 implements AgentProgram {
 
 		// add in a graph a tile
 		updateMap();
-		printGraph(graphMap);
+//		printGraph(graphMap);
 		System.out.println(currentEnergy);
 
 		if(currentEnergy==0){
@@ -115,6 +115,7 @@ public class PeluriaVacuumAgentProgramv2 implements AgentProgram {
 			if(baseLocation==null)
 				baseLocation = (Point) currentPosition.clone();
 			state=new CheckBeforeMovesAgentState(this);
+			System.out.println("CHeck before moves");
 		}
 
 		
@@ -168,6 +169,7 @@ public class PeluriaVacuumAgentProgramv2 implements AgentProgram {
 		M = environmentPercept.getM();
 		actionEnergyCosts = environmentPercept.getActionEnergyCosts();
 		isMovedLastTime = environmentPercept.isMovedLastTime();
+		isOnTheBase=environmentPercept.isOnBase();
 
 		currentEnergy = environmentPercept.getCurrentEnergy();
 		

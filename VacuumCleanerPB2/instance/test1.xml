@@ -1,31 +1,51 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <vacuum_istance>
   <board>
-    <size>10</size>
-    <tile_state x="1" y="0">dirty</tile_state>
-    <tile_state x="1" y="1">dirty</tile_state>
-    <tile_state x="2" y="0">dirty</tile_state>
-    <tile_state x="3" y="2">dirty</tile_state>
-    <tile_state x="3" y="3">dirty</tile_state>
-    <tile_state x="4" y="2">dirty</tile_state>
-    <tile_state x="4" y="3">dirty</tile_state>
-    <tile_state x="4" y="4">obstacle</tile_state>
-    <tile_state x="5" y="2">dirty</tile_state>
-    <tile_state x="5" y="3">dirty</tile_state>
-    <tile_state x="5" y="4">obstacle</tile_state>
-    <tile_state x="6" y="4">obstacle</tile_state>
-    <tile_state x="7" y="4">dirty</tile_state>
-    <tile_state x="8" y="3">dirty</tile_state>
-    <tile_state x="8" y="4">dirty</tile_state>
-    <tile_state x="8" y="5">dirty</tile_state>
-    <tile_state x="8" y="6">dirty</tile_state>
-    <tile_state x="8" y="7">obstacle</tile_state>
+    <size_n>10</size_n>
+    <size_m>10</size_m>
+    <tile_state x="1" y="1" value="1">dirty</tile_state>
+    <tile_state x="1" y="2">obstacle</tile_state>
+    <tile_state x="1" y="3">obstacle</tile_state>
+    <tile_state x="1" y="4">obstacle</tile_state>
+    <tile_state x="1" y="5">obstacle</tile_state>
+    <tile_state x="1" y="6">obstacle</tile_state>
+    <tile_state x="1" y="7">obstacle</tile_state>
+    <tile_state x="2" y="1">obstacle</tile_state>
+    <tile_state x="2" y="2" value="1">dirty</tile_state>
+    <tile_state x="3" y="1">obstacle</tile_state>
+    <tile_state x="3" y="2" value="1">dirty</tile_state>
+    <tile_state x="3" y="4" value="1">dirty</tile_state>
+    <tile_state x="3" y="5" value="1">dirty</tile_state>
+    <tile_state x="4" y="1">obstacle</tile_state>
+    <tile_state x="4" y="2" value="1">dirty</tile_state>
+    <tile_state x="4" y="6" value="1">dirty</tile_state>
+    <tile_state x="4" y="8">obstacle</tile_state>
+    <tile_state x="5" y="1">obstacle</tile_state>
+    <tile_state x="5" y="2" value="1">dirty</tile_state>
+    <tile_state x="5" y="6" value="1">dirty</tile_state>
+    <tile_state x="5" y="7" value="1">dirty</tile_state>
+    <tile_state x="5" y="8">obstacle</tile_state>
+    <tile_state x="5" y="9" value="1">dirty</tile_state>
+    <tile_state x="6" y="1">obstacle</tile_state>
+    <tile_state x="6" y="2" value="1">dirty</tile_state>
+    <tile_state x="6" y="6" value="1">dirty</tile_state>
+    <tile_state x="6" y="7" value="1">dirty</tile_state>
+    <tile_state x="6" y="8">obstacle</tile_state>
+    <tile_state x="6" y="9" value="1">dirty</tile_state>
+    <tile_state x="7" y="2" value="1">dirty</tile_state>
+    <tile_state x="7" y="6" value="1">dirty</tile_state>
+    <tile_state x="7" y="8">obstacle</tile_state>
+    <tile_state x="8" y="2" value="1">dirty</tile_state>
+    <tile_state x="8" y="3" value="1">dirty</tile_state>
     <tile_state x="8" y="8">obstacle</tile_state>
-    <tile_state x="8" y="9">obstacle</tile_state>
-    <tile_state x="9" y="6">dirty</tile_state>
-    <tile_state x="9" y="7">dirty</tile_state>
-    <tile_state x="9" y="8">dirty</tile_state>
-    <tile_state x="9" y="9">dirty</tile_state>
+    <tile_state x="8" y="9" value="1">dirty</tile_state>
+    <tile_state x="9" y="1">obstacle</tile_state>
+    <tile_state x="9" y="2">obstacle</tile_state>
+    <tile_state x="9" y="3" value="1">dirty</tile_state>
+    <tile_state x="9" y="6">obstacle</tile_state>
+    <tile_state x="9" y="7">obstacle</tile_state>
+    <tile_state x="9" y="8">obstacle</tile_state>
+    <tile_state x="9" y="9" value="1">dirty</tile_state>
   </board>
   <action_costs>
     <up>1.0</up>
@@ -35,12 +55,12 @@
     <suck>2.0</suck>
   </action_costs>
   <agent>
-    <x>2</x>
-    <y>5</y>
-    <energy>40.0</energy>
+    <x>7</x>
+    <y>4</y>
+    <energy>100.0</energy>
   </agent>
   <base>
-    <x>2</x>
-    <y>6</y>
+    <x>5</x>
+    <y>4</y>
   </base>
 </vacuum_istance>
