@@ -19,34 +19,31 @@ import aima.core.agent.impl.DynamicAction;
 import core.LocalVacuumEnvironmentPerceptTaskEnvironmentB;
 import core.VacuumEnvironment.LocationState;
 
-enum AgentStatus {
-	FindBase, SuckAndSearch, ReturnedBase, CheckBefore
-}
 
 public class PeluriaVacuumAgentProgramv2 implements AgentProgram {
 
-	private Action currentDirection;
-	private LinkedList<Action> nextDirections = new LinkedList<>();
+	protected Action currentDirection;
+	protected LinkedList<Action> nextDirections = new LinkedList<>();
 
-	private Point baseLocation;
-	private Point currentPosition;
-	private Point nextPosition;
-	private double currentEnergy;
-	private VacuumAgentSate state;
-	private boolean suckLastTime; 
-	private boolean isOnTheBase=false;
+	protected Point baseLocation;
+	protected Point currentPosition;
+	protected Point nextPosition;
+	protected double currentEnergy;
+	protected VacuumAgentSate state;
+	protected boolean suckLastTime; 
+	protected boolean isOnTheBase=false;
 
 
 	// dimension of enviroment
-	private int N;
-	private int M;
+	protected int N;
+	protected int M;
 
-	private boolean tilesWhereImIsDirty = false;
-	private UndirectedGraph<TileNode, DefaultEdge> graphMap = new SimpleGraph<>(
+	protected boolean tilesWhereImIsDirty = false;
+	protected UndirectedGraph<TileNode, DefaultEdge> graphMap = new SimpleGraph<>(
 			DefaultEdge.class);
 
-	private Map<Action, Double> actionEnergyCosts;
-	private boolean isMovedLastTime;
+	protected Map<Action, Double> actionEnergyCosts;
+	protected boolean isMovedLastTime;
 
 	@Override
 	public Action execute(Percept percept) {
@@ -162,7 +159,7 @@ public class PeluriaVacuumAgentProgramv2 implements AgentProgram {
 
 
 
-	private void InformationByEnvironment(
+	protected void InformationByEnvironment(
 			LocalVacuumEnvironmentPerceptTaskEnvironmentB environmentPercept) {
 
 		N = environmentPercept.getN();
@@ -182,7 +179,7 @@ public class PeluriaVacuumAgentProgramv2 implements AgentProgram {
 
 	}
 
-	private void updateVertexOnGraph(Point p, LocationState state) {
+	protected void updateVertexOnGraph(Point p, LocationState state) {
 		for (TileNode tileNode : graphMap.vertexSet()) {
 			if (tileNode.position.equals(p)) {
 				tileNode.TileType = state;
@@ -191,7 +188,7 @@ public class PeluriaVacuumAgentProgramv2 implements AgentProgram {
 	}
 
 
-	private void updateMap() {
+	protected void updateMap() {
 		nextPosition=getPointToTheAction(currentPosition,currentDirection);
 
 		TileNode nextTileNode=getTileFromPoint(nextPosition,graphMap);
