@@ -176,7 +176,7 @@ public class SearchSuckAgentState implements VacuumAgentSate {
 			graph_temp.removeVertex(tileRemoved);
 	}
 
-	private Point getNearestUnvisitedPoint(List<Point> unvisitedPoint) {
+	protected Point getNearestUnvisitedPoint(List<Point> unvisitedPoint) {
 		/*
 		 * Ritorna il punto con path minimo rispetto la posizione dell'agente va
 		 * calcolato un nuovo grafo con punti e eliminando gli ostacoli
@@ -210,7 +210,7 @@ public class SearchSuckAgentState implements VacuumAgentSate {
 		return pointToReturn;
 	}
 
-	private List<Point> getTotalUnvisitedPoint() {
+	protected List<Point> getTotalUnvisitedPoint() {
 		/*
 		 * Ritorna una lista di punti non obstacle che hanno dei vicini non
 		 * visitati
@@ -228,7 +228,7 @@ public class SearchSuckAgentState implements VacuumAgentSate {
 		return pointWhereThereAreNeighborhoodUnvisited;
 	}
 
-	private List<Point> neighborhoodUnvisited(TileNode tileNode) {
+	protected List<Point> neighborhoodUnvisited(TileNode tileNode) {
 		List<Point> returnList = new ArrayList<Point>();
 		boolean unvisited = false;
 		List<Point> tmp = new ArrayList<>();
@@ -251,7 +251,7 @@ public class SearchSuckAgentState implements VacuumAgentSate {
 		return returnList;
 	}
 
-	private Action actionToThePoint(Point nextPosition, Point currentPosition) {
+	protected Action actionToThePoint(Point nextPosition, Point currentPosition) {
 		if (nextPosition.x == currentPosition.x + 1)
 			return agent.getActionFromName("down");
 		if (nextPosition.x == currentPosition.x - 1)
@@ -264,7 +264,7 @@ public class SearchSuckAgentState implements VacuumAgentSate {
 	}
 
 	// get TileNode from Edge
-	private void getTileNodeFromEdge(DefaultEdge e, TileNode t1, TileNode t2) {
+	protected void getTileNodeFromEdge(DefaultEdge e, TileNode t1, TileNode t2) {
 		String edgeStrings[] = e.toString().split(":");
 		int x1 = Integer
 				.valueOf(edgeStrings[0].substring(

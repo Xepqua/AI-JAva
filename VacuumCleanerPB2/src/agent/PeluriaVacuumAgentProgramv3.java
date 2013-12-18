@@ -3,6 +3,7 @@ package agent;
 
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -29,7 +30,9 @@ public class PeluriaVacuumAgentProgramv3 extends PeluriaVacuumAgentProgramv2 imp
 	
 	//Ad ogni azione che fai controlla che poi puoi tornare alla base
 	
-
+	private double energyToSpent;
+	
+	private HashMap<Point, Integer> dirtyTile=new HashMap<Point, Integer>();
 
 	@Override
 	public Action execute(Percept percept) {
@@ -38,7 +41,8 @@ public class PeluriaVacuumAgentProgramv3 extends PeluriaVacuumAgentProgramv2 imp
 
 		InformationByEnvironment(environmentPercept);
 		if (currentPosition == null) {
-			state=new SearchSuckAgentState(this);
+			energyToSpent=currentEnergy;
+			state=new FindBaseAgentState(this);
 			currentDirection = getActionFromName("up");
 			nextDirections.add(currentDirection);
 			currentPosition = new Point(N / 2, M / 2);
@@ -54,26 +58,10 @@ public class PeluriaVacuumAgentProgramv3 extends PeluriaVacuumAgentProgramv2 imp
 		
 		changeState();
 
-
-		// return true if the agent is in a dirty tile
-		if(tilesWhereImIsDirty && state.suck()){
-			suckLastTime=true;
-			return getActionFromName("suck");
-		}
-
-		// return true if in current direction there is an obstacle
-//		if (!isMovedLastTime() || nextDirections.size() == 0)
-//			changeDirection();
-//		else {
-//			currentDirection = nextDirections.pollFirst();
-//		}
 		
 		if(nextDirections.size()<=0)
 			nextDirections=state.generatePath();
 		
-//		System.out.println("NEXT ACTIONS");
-//		for(Action a:nextDirections)
-//			System.out.println(a);
 		
 		suckLastTime=false;
 			
@@ -81,12 +69,24 @@ public class PeluriaVacuumAgentProgramv3 extends PeluriaVacuumAgentProgramv2 imp
 
 		// add in a graph a tile
 		updateMap();
-//		printGraph(graphMap);
+		printGraph(graphMap);
 		System.out.println(currentEnergy);
 
 		if(currentEnergy==0){
 			return getNoOpAction();
 		}
+		
+		if(currentDirection.equals(getActionFromName("suck"))){
+			suckLastTime=true;
+			energyToSpent-=actionEnergyCosts.get(currentDirection);
+			int levelCurrentTile=dirtyTile.get(currentPosition);
+			if(levelCurrentTile>1)
+				dirtyTile.put(currentPosition, levelCurrentTile-1);
+			else
+				dirtyTile.remove(currentPosition);
+		}else
+			energyToSpent-=actionEnergyCosts.get(currentDirection);
+		
 		
 		return currentDirection;
 
@@ -94,16 +94,26 @@ public class PeluriaVacuumAgentProgramv3 extends PeluriaVacuumAgentProgramv2 imp
 	
 
 	private void changeState() {
-		if (isOnTheBase && ! (state instanceof CheckBeforeMovesAgentState)) {
+		if(isOnTheBase &&  state instanceof FindBaseAgentState){
+			if(dirtyTile.size()>0){
+				energyToSpent=getEnergyToSpentForClean();
+				state=new CleanClusterAgentState(this);
+			}else{
+				energyToSpent=getEnergyToSpentForExplore();
+				state=new CheckBeforeMovesAgentState(this);
+			}
+		}
+		
+		if (energyToSpent<=0 &&  state instanceof CheckBeforeMovesAgentState  && dirtyTile.size()>0 ){
 			if(baseLocation==null)
 				baseLocation = (Point) currentPosition.clone();
-			state=new CheckBeforeMovesAgentState(this);
-			System.out.println("CHeck before moves");
+			state=new CleanClusterAgentState(this);
+			energyToSpent=getEnergyToSpentForClean();
 		}
 
-		
-		if(! (state instanceof FindBaseAgentState) && ! (state instanceof CheckBeforeMovesAgentState) && ! (state instanceof ReturnBaseAgentState) && currentEnergy<20 ){
-			state=new FindBaseAgentState(this);
+		if(energyToSpent<=0 && state instanceof CleanClusterAgentState){
+			energyToSpent=getEnergyToSpentForExplore();
+			state=new CheckBeforeMovesAgentState(this);
 		}
 		
 	}
@@ -122,14 +132,36 @@ public class PeluriaVacuumAgentProgramv3 extends PeluriaVacuumAgentProgramv2 imp
 		
 		
 		if (environmentPercept.getState().getLocState()
-				.equals(LocationState.Dirty))
-			tilesWhereImIsDirty = true;
-		else
-			tilesWhereImIsDirty = false;
+				.equals(LocationState.Dirty)){
+			int dirtyLevel=1;
+			dirtyTile.put(currentPosition, dirtyLevel);
+			
+		}
+		
+		
 		
 		
 
 	}
+
+
+	public double getEnergyToSpent() {
+		return energyToSpent;
+	}
+
+	public double getEnergyToSpentForExplore(){
+		return 0;
+	}
+	
+	public double getEnergyToSpentForClean(){
+		return 0;
+	}
+	
+	
+	public int getEnergyToClean(Point p){
+		return dirtyTile.get(p);
+	}
+	
 
 }
 

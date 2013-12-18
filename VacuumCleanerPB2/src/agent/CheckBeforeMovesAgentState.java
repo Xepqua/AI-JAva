@@ -43,7 +43,7 @@ public class CheckBeforeMovesAgentState extends SearchSuckAgentState {
 		return false;
 	}
 
-	private double movesToReturnBase() {
+	protected double movesToReturnBase() {
 		UndirectedGraph<TileNode, DefaultEdge> graph_temp = cloneGraph();
 
 		removeObstacleFromGraph(graph_temp);

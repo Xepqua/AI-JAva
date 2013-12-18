@@ -32,6 +32,8 @@ public class PeluriaVacuumAgentProgramv2 implements AgentProgram {
 	protected VacuumAgentSate state;
 	protected boolean suckLastTime; 
 	protected boolean isOnTheBase=false;
+	
+	protected int thresholdForFindBase=20;
 
 
 	// dimension of enviroment
@@ -58,12 +60,14 @@ public class PeluriaVacuumAgentProgramv2 implements AgentProgram {
 			currentPosition = new Point(N / 2, M / 2);
 			TileNode tileInitial = new TileNode(currentPosition, false);
 			graphMap.addVertex(tileInitial);
+			thresholdForFindBase=N*M;
 		} else {
 			if (!isMovedLastTime() && !suckLastTime) {
 				updateVertexOnGraph(nextPosition, LocationState.Obstacle);
 			} else if(!suckLastTime){
 				currentPosition = nextPosition;
 			}
+			thresholdForFindBase-=graphMap.vertexSet().size();
 		}
 		
 		changeState();
@@ -96,7 +100,7 @@ public class PeluriaVacuumAgentProgramv2 implements AgentProgram {
 		// add in a graph a tile
 		updateMap();
 //		printGraph(graphMap);
-		System.out.println(currentEnergy);
+//		System.out.println(currentEnergy);
 
 		if(currentEnergy==0){
 			return getNoOpAction();
@@ -112,11 +116,10 @@ public class PeluriaVacuumAgentProgramv2 implements AgentProgram {
 			if(baseLocation==null)
 				baseLocation = (Point) currentPosition.clone();
 			state=new CheckBeforeMovesAgentState(this);
-			System.out.println("CHeck before moves");
 		}
 
 		
-		if(! (state instanceof FindBaseAgentState) && ! (state instanceof CheckBeforeMovesAgentState) && ! (state instanceof ReturnBaseAgentState) && currentEnergy<20 ){
+		if(! (state instanceof FindBaseAgentState) && ! (state instanceof CheckBeforeMovesAgentState) && ! (state instanceof ReturnBaseAgentState) && currentEnergy<thresholdForFindBase ){
 			state=new FindBaseAgentState(this);
 		}
 		
