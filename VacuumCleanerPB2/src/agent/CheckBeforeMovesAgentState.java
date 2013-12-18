@@ -48,6 +48,7 @@ public class CheckBeforeMovesAgentState extends SearchSuckAgentState {
 
 		removeObstacleFromGraph(graph_temp);
 
+		
 		DijkstraShortestPath<TileNode, DefaultEdge> path = new DijkstraShortestPath<TileNode, DefaultEdge>(graph_temp, getTileFromPoint(agent.getCurrentPosition(), graph_temp), getTileFromPoint(agent.getBaseLocation(), graph_temp));
 		
 		return path.getPathLength();

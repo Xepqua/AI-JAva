@@ -33,7 +33,7 @@ public class PeluriaVacuumAgentProgramv2 implements AgentProgram {
 	protected boolean suckLastTime; 
 	protected boolean isOnTheBase=false;
 	
-	protected int thresholdForFindBase=20;
+	protected int thresholdForFindBase;
 
 
 	// dimension of enviroment

@@ -18,19 +18,19 @@ public class CleanClusterAgentState extends SearchSuckAgentState {
 	@Override
 	public LinkedList<Action> generatePath() {
 		LinkedList<Action> nextDirections=new LinkedList<Action>();
-		double energyToSpent=((PeluriaVacuumAgentProgramv3)agent).getEnergyToSpent();
-		
-		while(energyToSpent>0){
-			Point tileThatMaximizeDistance=getDirtyTileMaxSparsity();
-			LinkedList<Action> directionForArrive=getNextDirectionFromPoint(tileThatMaximizeDistance);
-			energyToSpent-=directionForArrive.size()+energyToClean(tileThatMaximizeDistance);
-			if(energyToSpent>0){
-				nextDirections.addAll(directionForArrive);
-				for(int i=energyToClean(tileThatMaximizeDistance);i>0;i--)
-				nextDirections.add(agent.getActionFromName("suck"));
-			}
-
-		}
+//		double energyToSpent=((PeluriaVacuumAgentProgramv3)agent).getEnergyToSpent();
+//		
+//		while(energyToSpent>0){
+//			Point tileThatMaximizeDistance=getDirtyTileMaxSparsity();
+//			LinkedList<Action> directionForArrive=getNextDirectionFromPoint(tileThatMaximizeDistance);
+//			energyToSpent-=directionForArrive.size()+energyToClean(tileThatMaximizeDistance);
+//			if(energyToSpent>0){
+//				nextDirections.addAll(directionForArrive);
+//				for(int i=energyToClean(tileThatMaximizeDistance);i>0;i--)
+//				nextDirections.add(agent.getActionFromName("suck"));
+//			}
+//
+//		}
 		
 		return nextDirections;
 	}
