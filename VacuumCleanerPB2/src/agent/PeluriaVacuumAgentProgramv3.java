@@ -47,6 +47,18 @@ public class PeluriaVacuumAgentProgramv3 extends PeluriaVacuumAgentProgramv2 imp
 		}
 		
 		changeState();
+		
+		// return true if the agent is in a dirty tile
+		if(tilesWhereImIsDirty && state.suck()){
+			System.out.println("CLEAN");
+			if(dirtyTile.containsKey(currentPosition)){
+				if(dirtyTile.get(currentPosition)==1)
+					dirtyTile.remove(currentPosition);
+			}
+			
+			suckLastTime=true;
+			return getActionFromName("suck");
+		}
 
 		
 		if(nextDirections.size()<=0)
@@ -55,6 +67,7 @@ public class PeluriaVacuumAgentProgramv3 extends PeluriaVacuumAgentProgramv2 imp
 		
 		suckLastTime=false;
 			
+		
 		currentDirection = nextDirections.pollFirst();
 
 		// add in a graph a tile
@@ -66,16 +79,6 @@ public class PeluriaVacuumAgentProgramv3 extends PeluriaVacuumAgentProgramv2 imp
 			return getNoOpAction();
 		}
 		
-		// return true if the agent is in a dirty tile
-		if(tilesWhereImIsDirty && state.suck()){
-			if(dirtyTile.containsKey(currentPosition)){
-				if(dirtyTile.get(currentPosition)==1)
-					dirtyTile.remove(currentPosition);
-			}
-			
-			suckLastTime=true;
-			return getActionFromName("suck");
-		}
 		
 		return currentDirection;
 
@@ -119,7 +122,9 @@ public class PeluriaVacuumAgentProgramv3 extends PeluriaVacuumAgentProgramv2 imp
 				.equals(LocationState.Dirty)){
 			int dirtyLevel=environmentPercept.getState().getDirtyAmount();
 			dirtyTile.put(currentPosition, dirtyLevel);
-			
+			tilesWhereImIsDirty=true;
+		}else{
+			tilesWhereImIsDirty=false;
 		}
 		
 		

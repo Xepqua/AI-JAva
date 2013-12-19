@@ -35,6 +35,7 @@ public class CheckBeforeMovesLevelDirtyAgentState extends CheckBeforeMovesAgentS
 	public boolean suck() {
 		double currentEnergy= agent.getCurrentEnergy();
 		double suckCost=agent.getActionEnergyCosts().get(agent.getActionFromName("suck"));
+		System.out.println(suckCost*agent.getEnergyToClean(agent.getCurrentPosition())+" "+currentEnergy);
 		if( suckCost*agent.getEnergyToClean(agent.getCurrentPosition()) + movesToReturnBase() < currentEnergy)
 			return true;
 		VacuumAgentSate returnBase=new ReturnBaseAgentState(agent);

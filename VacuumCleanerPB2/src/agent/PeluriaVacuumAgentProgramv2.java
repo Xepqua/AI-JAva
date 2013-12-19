@@ -111,11 +111,7 @@ public class PeluriaVacuumAgentProgramv2 implements AgentProgram {
 //		printGraph(graphMap);
 //		System.out.println(currentEnergy);
 //
-		if(currentEnergy==0){
-			System.out.println(currentPosition);
-			System.out.println(baseLocation);
-			return getNoOpAction();
-		}
+
 		
 		return currentDirection;
 
