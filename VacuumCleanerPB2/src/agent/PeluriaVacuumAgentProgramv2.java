@@ -118,7 +118,7 @@ public class PeluriaVacuumAgentProgramv2 implements AgentProgram {
 	}
 	
 
-	private void changeState() {
+	protected void changeState() {
 		if (isOnTheBase && ! (state instanceof CheckBeforeMovesAgentState)) {
 			if(baseLocation==null)
 				baseLocation = (Point) currentPosition.clone();
@@ -223,8 +223,9 @@ public class PeluriaVacuumAgentProgramv2 implements AgentProgram {
 				}
 			}
 			
-			if(!currentTileNode.position.equals(nextTileNode.position))
+			if(!currentTileNode.position.equals(nextTileNode.position)){
 				graphMap.addEdge(currentTileNode, nextTileNode);
+			}
 		}
 
 	}

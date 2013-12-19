@@ -3,15 +3,17 @@ package agent;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 
 
 public class KMeansDirtyTile {
 	
 	public static void main(String[] args) {
-		ArrayList<Point> points=new ArrayList<Point>();
+		HashSet<Point> points=new HashSet<Point>();
 		
 		Random r=new Random();
 		while(points.size()<10){
@@ -32,7 +34,7 @@ public class KMeansDirtyTile {
 		
 	}
 	
-	public static ArrayList<Cluster> getBestClusters(ArrayList<Point> points){
+	public static ArrayList<Cluster> getBestClusters(Set<Point> points){
 		
 		int K=points.size()/2;
 
@@ -83,6 +85,14 @@ public class KMeansDirtyTile {
 	}
 
     public void addPoints(List<Point> points){
+    	numberData=points.size();
+    	for(Point p:points){
+    		Data d=new Data(p.x, p.y);
+    		dataSet.add(d);
+    	}
+    }
+    
+    public void addPoints(Set<Point> points){
     	numberData=points.size();
     	for(Point p:points){
     		Data d=new Data(p.x, p.y);

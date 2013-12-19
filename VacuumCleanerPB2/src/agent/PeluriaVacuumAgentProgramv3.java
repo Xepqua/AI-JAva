@@ -23,7 +23,7 @@ import core.VacuumEnvironment.LocationState;
 
 public class PeluriaVacuumAgentProgramv3 extends PeluriaVacuumAgentProgramv2 implements AgentProgram {
 
-	int levelDirtyTile;
+	
 	
 	@Override
 	public Action execute(Percept percept) {
@@ -49,8 +49,13 @@ public class PeluriaVacuumAgentProgramv3 extends PeluriaVacuumAgentProgramv2 imp
 		changeState();
 		
 		// return true if the agent is in a dirty tile
+		if(tilesWhereImIsDirty){
+			int dirtyLevel=environmentPercept.getState().getDirtyAmount();
+			dirtyTile.put(currentPosition, dirtyLevel);
+		}
 		if(tilesWhereImIsDirty && state.suck()){
-			System.out.println("CLEAN");
+
+			
 			if(dirtyTile.containsKey(currentPosition)){
 				if(dirtyTile.get(currentPosition)==1)
 					dirtyTile.remove(currentPosition);
@@ -59,7 +64,8 @@ public class PeluriaVacuumAgentProgramv3 extends PeluriaVacuumAgentProgramv2 imp
 			suckLastTime=true;
 			return getActionFromName("suck");
 		}
-
+			
+		System.out.println(nextDirections.size());
 		
 		if(nextDirections.size()<=0)
 			nextDirections=state.generatePath();
@@ -79,12 +85,49 @@ public class PeluriaVacuumAgentProgramv3 extends PeluriaVacuumAgentProgramv2 imp
 			return getNoOpAction();
 		}
 		
+		if(currentDirection.equals(getActionFromName("suck")))
+			suckLastTime=true;
+		
 		
 		return currentDirection;
 
 	}
 	
-	private void changeState() {
+	@Override
+	protected void updateMap() {
+		nextPosition=getPointToTheAction(currentPosition,currentDirection);
+
+		TileNode nextTileNode=getTileFromPoint(nextPosition,graphMap);
+		TileNode currentTileNode=getTileFromPoint(currentPosition, graphMap);
+		
+		if ( nextTileNode==null || (!graphMap.containsEdge(nextTileNode,currentTileNode) &&  !graphMap.containsEdge(currentTileNode,nextTileNode))) {
+			if(nextTileNode==null){
+				nextTileNode=new TileNode(nextPosition, false);
+				graphMap.addVertex(nextTileNode);
+				
+				List<Point> tmp = new ArrayList<>();
+				tmp.add(new Point(nextTileNode.position.x - 1, nextTileNode.position.y));
+				tmp.add(new Point(nextTileNode.position.x, nextTileNode.position.y - 1));
+				tmp.add(new Point(nextTileNode.position.x + 1, nextTileNode.position.y));
+				tmp.add(new Point(nextTileNode.position.x, nextTileNode.position.y + 1));
+				
+				for(Point p:tmp){
+					TileNode nearTileNode=getTileFromPoint(p, graphMap);
+					if(nearTileNode!=null && graphMap.containsVertex(nearTileNode)){
+						graphMap.addEdge(  nextTileNode, nearTileNode);
+					}
+				}
+			}
+			
+			if(!currentTileNode.position.equals(nextTileNode.position)){
+				graphMap.addEdge(currentTileNode, nextTileNode);
+			}
+		}
+
+	}
+	
+	@Override
+	protected void changeState() {
 
 		if (isOnTheBase && state instanceof FindBaseAgentState) {
 			if(baseLocation==null)
@@ -94,18 +137,32 @@ public class PeluriaVacuumAgentProgramv3 extends PeluriaVacuumAgentProgramv2 imp
 				state=new CheckBeforeMovesLevelDirtyAgentState(this);
 			}else{
 				state=new CleanClusterAgentState(this);
+				return ;
 			}
 		}
 		
-		if(therIsNotCluster() && state instanceof CleanClusterAgentState )
+		if(state instanceof CleanClusterAgentState && nextDirections.size()==0){
 			state=new CheckBeforeMovesLevelDirtyAgentState(this);
+		}
 	}
 
 
 	private boolean therIsNotCluster() {
+//		if(dirtyTile.size()==0)
+//			return true;
+		
+		
+//		for(Cluster c:clusters){
+//			System.out.println("CLUSTER "+c.getDistance());
+//			for(Point p:c.getPoints())
+//				System.out.println(p);
+//			System.out.println();
+//		}
+		
 		return true;
 	}
 
+	@Override
 	protected void InformationByEnvironment(
 			LocalVacuumEnvironmentPerceptTaskEnvironmentB environmentPercept) {
 
@@ -120,8 +177,6 @@ public class PeluriaVacuumAgentProgramv3 extends PeluriaVacuumAgentProgramv2 imp
 		
 		if (environmentPercept.getState().getLocState()
 				.equals(LocationState.Dirty)){
-			int dirtyLevel=environmentPercept.getState().getDirtyAmount();
-			dirtyTile.put(currentPosition, dirtyLevel);
 			tilesWhereImIsDirty=true;
 		}else{
 			tilesWhereImIsDirty=false;

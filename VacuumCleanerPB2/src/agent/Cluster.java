@@ -3,7 +3,7 @@ package agent;
 import java.awt.Point;
 import java.util.ArrayList;
 
-public class Cluster {
+public class Cluster implements Comparable<Cluster>{
 	
 	private ArrayList<Data> dataSet=new ArrayList<Data>();
 	private Data centroid;
@@ -41,6 +41,15 @@ public class Cluster {
 
 	public void setCentroid(Data centroid) {
 		this.centroid = centroid;
+	}
+
+	@Override
+	public int compareTo(Cluster o) {
+		if(getDistance()>o.getDistance())
+			return 1;
+		if(getDistance()<o.getDistance())
+			return -1;
+		return 0;
 	}
 	
 
