@@ -2,9 +2,11 @@ package agent;
 
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.swing.text.html.HTMLDocument.HTMLReader.IsindexAction;
 
@@ -34,6 +36,9 @@ public class PeluriaVacuumAgentProgramv2 implements AgentProgram {
 	protected boolean isOnTheBase=false;
 	
 	protected int thresholdForFindBase;
+	
+	protected HashMap<Point, Integer> dirtyTile=new HashMap<Point, Integer>();
+
 
 
 	// dimension of enviroment
@@ -75,6 +80,7 @@ public class PeluriaVacuumAgentProgramv2 implements AgentProgram {
 
 		// return true if the agent is in a dirty tile
 		if(tilesWhereImIsDirty && state.suck()){
+			
 			suckLastTime=true;
 			return getActionFromName("suck");
 		}
@@ -385,5 +391,13 @@ public class PeluriaVacuumAgentProgramv2 implements AgentProgram {
 		this.suckLastTime = suckLastTime;
 	}
 
+	
+	public int getEnergyToClean(Point p){
+		return dirtyTile.get(p);
+	}
+	
+	public Set<Point> getDirtyTileFind(){
+		return dirtyTile.keySet();
+	}
 }
 

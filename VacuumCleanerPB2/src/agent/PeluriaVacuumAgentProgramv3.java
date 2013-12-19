@@ -25,8 +25,6 @@ public class PeluriaVacuumAgentProgramv3 extends PeluriaVacuumAgentProgramv2 imp
 
 	
 	
-	private HashMap<Point, Integer> dirtyTile=new HashMap<Point, Integer>();
-
 	@Override
 	public Action execute(Percept percept) {
 
@@ -130,13 +128,7 @@ public class PeluriaVacuumAgentProgramv3 extends PeluriaVacuumAgentProgramv2 imp
 	}
 	
 	
-	public int getEnergyToClean(Point p){
-		return dirtyTile.get(p);
-	}
-	
-	public Set<Point> getDirtyTileFind(){
-		return dirtyTile.keySet();
-	}
+
 	
 
 }
