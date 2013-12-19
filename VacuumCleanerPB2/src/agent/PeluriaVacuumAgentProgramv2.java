@@ -72,7 +72,6 @@ public class PeluriaVacuumAgentProgramv2 implements AgentProgram {
 			} else if(!suckLastTime){
 				currentPosition = nextPosition;
 			}
-			thresholdForFindBase-=graphMap.vertexSet().size();
 		}
 		
 		changeState();
@@ -80,10 +79,13 @@ public class PeluriaVacuumAgentProgramv2 implements AgentProgram {
 
 		// return true if the agent is in a dirty tile
 		if(tilesWhereImIsDirty && state.suck()){
+			if(dirtyTile.containsKey(currentPosition))
+				dirtyTile.remove(currentPosition);
 			
 			suckLastTime=true;
 			return getActionFromName("suck");
-		}
+		}else if(tilesWhereImIsDirty)
+			dirtyTile.put(currentPosition, 1);
 
 		// return true if in current direction there is an obstacle
 //		if (!isMovedLastTime() || nextDirections.size() == 0)
@@ -103,12 +105,15 @@ public class PeluriaVacuumAgentProgramv2 implements AgentProgram {
 			
 		currentDirection = nextDirections.pollFirst();
 
+
 		// add in a graph a tile
 		updateMap();
 //		printGraph(graphMap);
 //		System.out.println(currentEnergy);
-
+//
 		if(currentEnergy==0){
+			System.out.println(currentPosition);
+			System.out.println(baseLocation);
 			return getNoOpAction();
 		}
 		

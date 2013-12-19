@@ -1,5 +1,6 @@
 package agent;
 
+import java.awt.Point;
 import java.util.LinkedList;
 
 import org.jgrapht.UndirectedGraph;
@@ -17,11 +18,19 @@ public class CheckBeforeMovesAgentState extends SearchSuckAgentState {
 	@Override
 	public LinkedList<Action> generatePath() {
 		double currentEnergy= agent.getCurrentEnergy();
-		LinkedList<Action> nextDirection = super.generatePath();
+		LinkedList<Action> nextDirection=null;
+		
+		if(agent.getDirtyTileFind().size()>0){
+			LinkedList<Point> points=new LinkedList<Point>(agent.getDirtyTileFind());
+			Point nearestDirtyTile=getNearestUnvisitedPoint(points);
+			nextDirection=getNextDirectionFromPoint(nearestDirtyTile);
+			
+		}else
+			nextDirection = super.generatePath();
 
 		if(nextDirection!=null){
 			
-			if(nextDirection.size()+movesToReturnBase()<=currentEnergy)
+			if(nextDirection.size()+movesToReturnBase()<currentEnergy)
 				return nextDirection;
 
 		}
