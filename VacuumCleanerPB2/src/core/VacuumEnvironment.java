@@ -53,16 +53,16 @@ public class VacuumEnvironment extends AbstractEnvironment {
 		if (!agentAction.isNoOp()
 				&& this.envState.getCurrentEnergy(agent) < this.envState
 						.getEnergyCost(agentAction)) {
+
 			this.isDone = true;
 			System.out
-					.println("************************************************************");
+					.println("******************************************************************************");
 			System.out
-					.println("Agent killed by the system because it tried to use more energy than it has");
+					.println("* Agent killed by the system because it tried to use more energy than it has *");
 			System.out
-					.println("************************************************************");
-		}
+					.println("******************************************************************************");
 
-		if (this.envState.getActionFromName("suck").equals(agentAction)) {
+		} else if (this.envState.getActionFromName("suck").equals(agentAction)) {
 			if (LocationState.Dirty.equals(this.envState
 					.getLocationState(this.envState.getAgentLocation(agent)))) {
 				this.envState.suckTile(this.envState.getAgentLocation(agent));

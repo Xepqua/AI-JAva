@@ -23,7 +23,7 @@ import core.VacuumEnvironment.LocationState;
 
 public class PeluriaVacuumAgentProgramv3 extends PeluriaVacuumAgentProgramv2 implements AgentProgram {
 
-	
+	int levelDirtyTile;
 	
 	@Override
 	public Action execute(Percept percept) {
@@ -66,13 +66,15 @@ public class PeluriaVacuumAgentProgramv3 extends PeluriaVacuumAgentProgramv2 imp
 			return getNoOpAction();
 		}
 		
-		if(currentDirection.equals(getActionFromName("suck"))){
+		// return true if the agent is in a dirty tile
+		if(tilesWhereImIsDirty && state.suck()){
+			if(dirtyTile.containsKey(currentPosition)){
+				if(dirtyTile.get(currentPosition)==1)
+					dirtyTile.remove(currentPosition);
+			}
+			
 			suckLastTime=true;
-			int levelCurrentTile=dirtyTile.get(currentPosition);
-			if(levelCurrentTile>1)
-				dirtyTile.put(currentPosition, levelCurrentTile-1);
-			else
-				dirtyTile.remove(currentPosition);
+			return getActionFromName("suck");
 		}
 		
 		return currentDirection;
@@ -86,15 +88,14 @@ public class PeluriaVacuumAgentProgramv3 extends PeluriaVacuumAgentProgramv2 imp
 				baseLocation = (Point) currentPosition.clone();
 			
 			if(therIsNotCluster()){
-				state=new CheckBeforeMovesAgentState(this);
+				state=new CheckBeforeMovesLevelDirtyAgentState(this);
 			}else{
 				state=new CleanClusterAgentState(this);
 			}
 		}
 		
-		if(!therIsNotCluster() && state instanceof CheckBeforeMovesAgentState)
-			state=new CleanClusterAgentState(this);
-		
+		if(therIsNotCluster() && state instanceof CleanClusterAgentState )
+			state=new CheckBeforeMovesLevelDirtyAgentState(this);
 	}
 
 
@@ -116,7 +117,7 @@ public class PeluriaVacuumAgentProgramv3 extends PeluriaVacuumAgentProgramv2 imp
 		
 		if (environmentPercept.getState().getLocState()
 				.equals(LocationState.Dirty)){
-			int dirtyLevel=1;
+			int dirtyLevel=environmentPercept.getState().getDirtyAmount();
 			dirtyTile.put(currentPosition, dirtyLevel);
 			
 		}
